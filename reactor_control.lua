@@ -1,4 +1,10 @@
 
+local function cWrite(text)
+    local w, h = term.getSize()
+	local cX,cY = term.getCursorPos()
+    term.setCursorPos(math.floor(w / 2 - text:len() / 2 + .5), cY)
+    io.write(text)
+end
 crashScreen = function(...)
     local pass, err = ...
     if not pass and err then
