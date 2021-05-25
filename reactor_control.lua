@@ -1,4 +1,3 @@
-
 local function cWrite(text)
     local w, h = term.getSize()
 	local cX,cY = term.getCursorPos()
@@ -14,10 +13,10 @@ crashScreen = function(...)
         term.setTextColor(colors.white)
         term.clear()
         
-        term.setBackgroundColor(colors.blue)
+        term.setBackgroundColor(colors.red)
         paintutils.drawFilledBox(1,0,51,3)
         term.setCursorPos(1,2)
-        cWrite('Something went wrong!')
+        cWrite('WARNING:')
         
         term.setBackgroundColor(colors.black)
         printError('\n\n\n'..err..'\n')
