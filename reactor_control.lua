@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 29
+        build = 30
     },
 	files = 
 	{
@@ -57,7 +57,9 @@ progInfo.help = {
             helpScreen.setTextColor(colors.white)
             helpScreen.clear()
             for i=scroll, sh+scroll do
-                helpScreen.write(lines[i].."\n")
+                helpScreen.write(lines[i])
+                local x,y = helpScreen.getCursorPos()
+                helpScreen.setCursorPos(1,y+1)
             end
             helpScreen.setCursorPos(1,h)
             helpScreen.write(scroll..","..sh+scroll)
