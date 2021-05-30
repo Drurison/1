@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 28
+        build = 29
     },
 	files = 
 	{
@@ -19,7 +19,7 @@ progInfo.help = {
     display = function()
         term.setCursorPos(1,1) term.clear()
         local w, h = term.getSize()
-        local helpScreen = window.create(1,1,w,h-1)
+        local helpScreen = window.create(term.current(),1,1,w,h-1)
         local sw, sh = helpScreen.getSize()
         local lines = {
             progInfo.appName,
