@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 32
+        build = 33
     },
 	files = 
 	{
@@ -72,6 +72,7 @@ progInfo.help = {
                 term.setCursorPos(1,h)
             elseif key == keys.enter or key == keys.numPadEnter then break end
         end
+        term.clear()
         error()
     end,
 }
