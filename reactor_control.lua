@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 9
+        build = 10
     },
 	files = 
 	{
@@ -18,6 +18,7 @@ local progInfo = {
 progInfo.help = {
     display = function()
         term.setCursorPos(1,1) term.clear()
+        local w, h = term.getSize()
         local lines = {
             progInfo.appName,
             "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
@@ -48,7 +49,7 @@ progInfo.help = {
             "<eof>",
         }
         local scroll = 1
-        for i=scroll, #lines do
+        for i=scroll, h do
             print(lines[i])
         end
         error()
