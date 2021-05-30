@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 51
+        build = 52
     },
 	files = 
 	{
@@ -44,7 +44,7 @@ progInfo.help = {
             colors.white,
             " F9 - Triggers crash screen",
         }
-        local lineStrings = 0
+        local lineStrings = 1
         for i=1, #lines do
             if type(lines[i]) == "string" then
                 lineStrings = lineStrings + 1
