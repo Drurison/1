@@ -4,9 +4,9 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.0.0',
-	    date = 'May 28, 2021',
-        build = 5
+        string = '1.0.1',
+	    date = 'May 30, 2021',
+        build = 1
     },
 	files = 
 	{
@@ -741,15 +741,11 @@ vox_sequences = {
 			length = 1.25,
 		},
 		{
-			sound = "aci.vox.insufficient",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.fissile",
+			sound = "aci.vox.fuel",
 			length = 0.6,
 		},
 		{
-			sound = "aci.vox.fuel",
+			sound = "aci.vox.depleted",
 			length = 1,
 		},
 	},
