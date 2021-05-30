@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 8
+        build = 9
     },
 	files = 
 	{
@@ -22,6 +22,30 @@ progInfo.help = {
             progInfo.appName,
             "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
             "",
+            "Update v1.0.1:",
+            " + Added scrollable help screen",
+            " * Updated VOX lines (new pack version required)",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
+            "Ln 19",
+            "Rainbow Dash is best pegasus!",
+            "Twilight is cutest princess!",
+            "-",
+            "-",
+            "-",
+            "-",
+            "Luna is best princess!",
+            "<eof>",
         }
         local scroll = 1
         for i=scroll, #lines do
