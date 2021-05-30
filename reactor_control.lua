@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 7
+        build = 8
     },
 	files = 
 	{
@@ -20,7 +20,7 @@ progInfo.help = {
         term.setCursorPos(1,1) term.clear()
         local lines = {
             progInfo.appName,
-            "v"..progInfo.version.string .. " build "..progInfo.version.build " ("..progInfo.version.date..")",
+            "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
             "",
         }
         local scroll = 1
