@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 42
+        build = 43
     },
 	files = 
 	{
@@ -28,27 +28,6 @@ progInfo.help = {
             "Update v1.0.1:",
             " + Added scrollable help screen",
             " * Updated VOX lines (new pack version required)",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "Ln 19",
-            "Rainbow Dash is best pegasus!",
-            "Twilight is cutest princess!",
-            "-",
-            "-",
-            "-",
-            "-",
-            "Luna is best princess!",
-            "<eof>",
         }
         local scroll = 1
         local scrollMax = #lines-sh+1 
