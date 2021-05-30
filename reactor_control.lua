@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 25
+        build = 26
     },
 	files = 
 	{
@@ -53,11 +53,11 @@ progInfo.help = {
             term.setCursorPos(1,1)
             term.setTextColor(colors.white)
             term.clear()
-            for i=scroll, h-1 do
+            for i=scroll, h+scroll-1 do
                 print(lines[i])
             end
             term.setCursorPos(1,h)
-            write(scroll)
+            write(scroll..","..h+scroll-1)
             local event, key = os.pullEvent("key")
             if key == keys.up then
                 scroll = math.clamp(1,#lines,scroll-1)
