@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 30
+        build = 31
     },
 	files = 
 	{
@@ -52,7 +52,7 @@ progInfo.help = {
         }
         local scroll = 1
         while true do
-            scroll = math.clamp(1,sh,scroll)
+            scroll = math.clamp(1,#lines,scroll)
             helpScreen.setCursorPos(1,1)
             helpScreen.setTextColor(colors.white)
             helpScreen.clear()
