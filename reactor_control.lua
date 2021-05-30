@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 6
+        build = 7
     },
 	files = 
 	{
@@ -15,13 +15,12 @@ local progInfo = {
 	},
 }
 
-
 progInfo.help = {
     display = function()
         term.setCursorPos(1,1) term.clear()
         local lines = {
             progInfo.appName,
-            tostring("v"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")"),
+            "v"..progInfo.version.string .. " build "..progInfo.version.build " ("..progInfo.version.date..")",
             "",
         }
         local scroll = 1
