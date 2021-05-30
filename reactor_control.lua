@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 16
+        build = 17
     },
 	files = 
 	{
@@ -57,7 +57,11 @@ progInfo.help = {
             if key then write(event..", "..key) end
             local event, key = os.pullEvent("key")
             if key == keys.up then math.clamp(1,#lines,scroll-1)
+                term.setCursorPos(1,h)
+                write(event..", "..key)
             elseif key == keys.down then  math.clamp(1,#lines,scroll+1)
+                term.setCursorPos(1,h)
+                write(event..", "..key)
             elseif key == keys.enter or key == keys.numPadEnter then break end
         end
         error()
