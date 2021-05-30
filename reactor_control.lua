@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 13
+        build = 14
     },
 	files = 
 	{
@@ -50,7 +50,7 @@ progInfo.help = {
         }
         local scroll = 1
         while true do
-            for i=scroll, h do
+            for i=scroll, h-1 do
                 print(lines[i])
             end
             local event, key = os.pullEvent("key")
