@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 41
+        build = 42
     },
 	files = 
 	{
@@ -52,7 +52,7 @@ progInfo.help = {
         }
         local scroll = 1
         local scrollMax = #lines-sh+1 
-        --if scrollMax <= sh then scrollMax = 1 end
+        if #lines <= sh then scrollMax = 1 end
         while true do
             scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
@@ -71,6 +71,7 @@ progInfo.help = {
             helpScreen.setTextColor(colors.white)
             helpScreen.clear()
             for i=scroll, sh+scroll do
+                if lines[i] == nil then break end
                 helpScreen.write(lines[i])
                 local x,y = helpScreen.getCursorPos()
                 helpScreen.setCursorPos(1,y+1)
