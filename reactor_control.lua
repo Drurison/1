@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 12
+        build = 13
     },
 	files = 
 	{
@@ -62,7 +62,7 @@ progInfo.help = {
     end,
 }
 
-function clamp(vMin,vMax,x)
+function math.clamp(vMin,vMax,x)
 	return math.max(math.min(x,vMax),vMin)
 end
 local function keepWidth(text,width)
