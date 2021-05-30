@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 27
+        build = 28
     },
 	files = 
 	{
@@ -66,7 +66,7 @@ progInfo.help = {
                 scroll = scroll-1
                 term.setCursorPos(1,h)
             elseif key == keys.down then
-                scroll+1
+                scroll = scroll+1
                 term.setCursorPos(1,h)
             elseif key == keys.enter or key == keys.numPadEnter then break end
         end
