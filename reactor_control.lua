@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 26
+        build = 27
     },
 	files = 
 	{
@@ -19,6 +19,8 @@ progInfo.help = {
     display = function()
         term.setCursorPos(1,1) term.clear()
         local w, h = term.getSize()
+        local helpScreen = window.create(1,1,w,h-1)
+        local sw, sh = helpScreen.getSize()
         local lines = {
             progInfo.appName,
             "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
@@ -50,20 +52,21 @@ progInfo.help = {
         }
         local scroll = 1
         while true do
-            term.setCursorPos(1,1)
-            term.setTextColor(colors.white)
-            term.clear()
-            for i=scroll, h+scroll-1 do
-                print(lines[i])
+            scroll = math.clamp(1,sh,scroll)
+            helpScreen.setCursorPos(1,1)
+            helpScreen.setTextColor(colors.white)
+            helpScreen.clear()
+            for i=scroll, sh+scroll do
+                helpScreen.write(lines[i].."\n")
             end
-            term.setCursorPos(1,h)
-            write(scroll..","..h+scroll-1)
+            helpScreen.setCursorPos(1,h)
+            helpScreen.write(scroll..","..sh+scroll)
             local event, key = os.pullEvent("key")
             if key == keys.up then
-                scroll = math.clamp(1,#lines,scroll-1)
+                scroll = scroll-1
                 term.setCursorPos(1,h)
             elseif key == keys.down then
-                scroll = math.clamp(1,#lines,scroll+1)
+                scroll+1
                 term.setCursorPos(1,h)
             elseif key == keys.enter or key == keys.numPadEnter then break end
         end
