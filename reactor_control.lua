@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 24
+        build = 25
     },
 	files = 
 	{
@@ -66,7 +66,6 @@ progInfo.help = {
                 scroll = math.clamp(1,#lines,scroll+1)
                 term.setCursorPos(1,h)
             elseif key == keys.enter or key == keys.numPadEnter then break end
-            sleep(1)
         end
         error()
     end,
