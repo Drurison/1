@@ -28,13 +28,15 @@ progInfo.help = {
             "Switches:",
             " /dev   - Activates dev functions",
             " /debug - Triggers debugging keybinds",
-            "  > F9 - Triggers crash screen",
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
             "",
-            "Update v1.0.1:",
+            "Changelong v1.0.1:",
             " + Added scrollable help screen",
             " * Updated VOX lines (new pack version required)",
+            "",
+            "Debugging hotkeys:",
+            " F9 - Triggers crash screen",
         }
         local scroll = 1
         local scrollMax = #lines-sh+1 
