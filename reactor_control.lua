@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 14
+        build = 15
     },
 	files = 
 	{
@@ -53,6 +53,8 @@ progInfo.help = {
             for i=scroll, h-1 do
                 print(lines[i])
             end
+            term.setCursorPos(1,h)
+            write(event..", "..key)
             local event, key = os.pullEvent("key")
             if key == keys.up then math.clamp(1,#lines,scroll-1)
             elseif key == keys.down then  math.clamp(1,#lines,scroll+1)
