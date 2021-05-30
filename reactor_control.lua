@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 47
+        build = 48
     },
 	files = 
 	{
@@ -25,22 +25,35 @@ progInfo.help = {
             progInfo.appName,
             "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
             "",
+            colors.lightBlue,
             "Switches:",
+            colors.white,
             " /dev   - Activates dev functions",
             " /debug - Triggers debugging keybinds",
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
             "",
+            colors.lightBlue,
             "Changelong v1.0.1:",
+            colors.white,
             " + Added scrollable help screen",
             " * Updated VOX lines (new pack version required)",
             "",
+            colors.lightBlue,
             "Debugging hotkeys:",
+            colors.white,
             " F9 - Triggers crash screen",
         }
+        local lineStrings = 0
+        for i=1, #lines do
+            if type(lines[i]) == "string" then
+                lineStrings = lineStrings + 1
+            end
+        end
+        local color = false
         local scroll = 1
-        local scrollMax = #lines-sh+1 
-        if #lines <= sh then scrollMax = 1 end
+        local scrollMax = lineStrings-sh+1 
+        if lineStrings <= sh then scrollMax = 1 end
         while true do
             scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
@@ -60,9 +73,14 @@ progInfo.help = {
             helpScreen.clear()
             for i=scroll, sh+scroll do
                 if lines[i] == nil then break end
-                helpScreen.write(lines[i])
-                local x,y = helpScreen.getCursorPos()
-                helpScreen.setCursorPos(1,y+1)
+                if type(lines[i]) == "number" then 
+                    color = lines[i]
+                else
+                    if color then helpScreen.setTextColor(color) end
+                    helpScreen.write(lines[i])
+                    local x,y = helpScreen.getCursorPos()
+                    helpScreen.setCursorPos(1,y+1)
+                end
             end
             helpScreen.setCursorPos(1,h)
             helpScreen.write(scroll..","..sh+scroll)
