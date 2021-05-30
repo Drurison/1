@@ -4,7 +4,7 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.0.1',
+        string = '1.0.1a1',
 	    date = 'May 30, 2021',
         build = 1
     },
