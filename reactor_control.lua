@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 37
+        build = 38
     },
 	files = 
 	{
@@ -51,8 +51,9 @@ progInfo.help = {
             "<eof>",]]
         }
         local scroll = 1
+        local scrollMax = #lines-sh+1 and #lines-sh+1 > sh or 1
         while true do
-            scroll = math.clamp(1,#lines-sh+1,scroll)
+            scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
 
             term.setTextColor(colors.yellow)
@@ -60,7 +61,7 @@ progInfo.help = {
             if scroll == 1 then term.setTextColor(colors.gray) end
             term.write("/\\")
             term.setTextColor(colors.yellow)
-            if scroll == #lines-sh+1 then term.setTextColor(colors.gray) end
+            if scroll == scrollMax then term.setTextColor(colors.gray) end
             term.write(" \\/")
             term.setTextColor(colors.yellow)
             term.write(" to scroll or press ENTER to quit.")
