@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 11
+        build = 12
     },
 	files = 
 	{
@@ -62,6 +62,9 @@ progInfo.help = {
     end,
 }
 
+function clamp(vMin,vMax,x)
+	return math.max(math.min(x,vMax),vMin)
+end
 local function keepWidth(text,width)
     local outputString = ""
     for i=1, #width-#text do
@@ -123,9 +126,6 @@ function sPos(x, y, relative, r2)
 		y = y1 + y
 	end
 	return term.setCursorPos(x, y)
-end
-function clamp(vMin,vMax,x)
-	return math.max(math.min(x,vMax),vMin)
 end
 --	Progress bar (Requires 'sPos()')
 function barMeter(x, y, width, items, completed, text, text2, barColor, backgroundColor, terminal)
