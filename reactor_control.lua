@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 10
+        build = 11
     },
 	files = 
 	{
@@ -49,8 +49,14 @@ progInfo.help = {
             "<eof>",
         }
         local scroll = 1
-        for i=scroll, h do
-            print(lines[i])
+        while true do
+            for i=scroll, h do
+                print(lines[i])
+            end
+            local event, key = os.pullEvent("key")
+            if key == keys.up then math.clamp(1,#lines,scroll-1)
+            elseif key == keys.down then  math.clamp(1,#lines,scroll+1)
+            elseif key == keys.enter or key == keys.numPadEnter then break end
         end
         error()
     end,
