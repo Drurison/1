@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 22
+        build = 23
     },
 	files = 
 	{
@@ -59,15 +59,11 @@ progInfo.help = {
             term.setCursorPos(1,h)
             local event, key = os.pullEvent("key")
             if key == keys.up then
-                math.clamp(1,#lines,scroll-1)
+                scroll = math.clamp(1,#lines,scroll-1)
                 term.setCursorPos(1,h)
-                write(event..", "..keys.getName(key))
-                term.setTextColor(colors.yellow) write(" "..scroll..","..#lines)
             elseif key == keys.down then
-                math.clamp(1,#lines,scroll+1)
+                scroll = math.clamp(1,#lines,scroll+1)
                 term.setCursorPos(1,h)
-                write(event..", "..keys.getName(key))
-                term.setTextColor(colors.yellow) write(" "..scroll..","..#lines)
             elseif key == keys.enter or key == keys.numPadEnter then break end
             sleep(1)
         end
