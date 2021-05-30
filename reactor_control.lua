@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 43
+        build = 44
     },
 	files = 
 	{
@@ -24,6 +24,13 @@ progInfo.help = {
         local lines = {
             progInfo.appName,
             "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
+            "",
+            "Switches:",
+            " /dev - Activates dev functions",
+            " /debug - Triggers debugging keybinds"
+            "          F9 - trigger crash screen",
+            " /voxtest - Opens the VOX test menu",
+            " /test - Triggers temporary tests (if any)",
             "",
             "Update v1.0.1:",
             " + Added scrollable help screen",
