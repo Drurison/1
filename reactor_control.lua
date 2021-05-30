@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 5
+        build = 6
     },
 	files = 
 	{
@@ -14,6 +14,7 @@ local progInfo = {
 		os_settings = '/.settings',
 	},
 }
+
 
 progInfo.help = {
     display = function()
