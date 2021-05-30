@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 34
+        build = 35
     },
 	files = 
 	{
@@ -53,6 +53,17 @@ progInfo.help = {
         local scroll = 1
         while true do
             scroll = math.clamp(1,#lines-sh+1,scroll)
+            term.setCursorPos(1,h)
+
+            term.setTextColor(colors.yellow)
+            term.write("Use ")
+            if scroll == 1 then term.setTextColor(colors.gray) end
+            term.write("/\\")
+            if scroll == #lines-sh+1 then term.setTextColor(colors.gray) end
+            term.write(" \\/")
+            term.setTextColor(colors.yellow)
+            term.write(" to scroll or press ENTER to quit.")
+
             helpScreen.setCursorPos(1,1)
             helpScreen.setTextColor(colors.white)
             helpScreen.clear()
