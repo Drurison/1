@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 48
+        build = 49
     },
 	files = 
 	{
@@ -71,6 +71,7 @@ progInfo.help = {
             helpScreen.setCursorPos(1,1)
             helpScreen.setTextColor(colors.white)
             helpScreen.clear()
+            color = false
             for i=scroll, sh+scroll do
                 if lines[i] == nil then break end
                 if type(lines[i]) == "number" then 
