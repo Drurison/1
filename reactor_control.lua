@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 17
+        build = 18
     },
 	files = 
 	{
@@ -50,16 +50,20 @@ progInfo.help = {
         }
         local scroll = 1
         while true do
+            term.setCursorPos(1,1)
+            term.clear()
             for i=scroll, h-1 do
                 print(lines[i])
             end
             term.setCursorPos(1,h)
             if key then write(event..", "..key) end
             local event, key = os.pullEvent("key")
-            if key == keys.up then math.clamp(1,#lines,scroll-1)
+            if key == keys.up then
+                math.clamp(1,#lines,scroll-1)
                 term.setCursorPos(1,h)
                 write(event..", "..key)
-            elseif key == keys.down then  math.clamp(1,#lines,scroll+1)
+            elseif key == keys.down then
+                math.clamp(1,#lines,scroll+1)
                 term.setCursorPos(1,h)
                 write(event..", "..key)
             elseif key == keys.enter or key == keys.numPadEnter then break end
