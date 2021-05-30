@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 39
+        build = 40
     },
 	files = 
 	{
@@ -51,7 +51,8 @@ progInfo.help = {
             "<eof>",
         }
         local scroll = 1
-        local scrollMax = #lines-sh+1 and #lines-sh+1 > sh or 1
+        local scrollMax = #lines-sh+1 
+        if #lines-sh+1 <= sh then scrollMax = 1 end
         while true do
             scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
