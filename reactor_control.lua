@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 1
+        build = 2
     },
 	files = 
 	{
@@ -17,6 +17,7 @@ local progInfo = {
 
 progInfo.help = {
     display = function()
+        term.setCursorPos(1,1) term.clear()
         print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
         error()
     end,
