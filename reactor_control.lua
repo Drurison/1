@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 35
+        build = 36
     },
 	files = 
 	{
@@ -59,6 +59,7 @@ progInfo.help = {
             term.write("Use ")
             if scroll == 1 then term.setTextColor(colors.gray) end
             term.write("/\\")
+            term.setTextColor(colors.yellow)
             if scroll == #lines-sh+1 then term.setTextColor(colors.gray) end
             term.write(" \\/")
             term.setTextColor(colors.yellow)
