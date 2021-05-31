@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 78,
+        build = 79,
     },
 	files = 
 	{
@@ -34,6 +34,8 @@ progInfo.help = {
         -- "|                                                    |"
             {colors.lightBlue,"Changelong v1.0.1:"},
             " + Added scrollable help screen",
+            " + Added VOX sebtece for manual activation when",
+            "   master alarm is active",
             " * Now checks statuses before hitting activate",
             " * Updated VOX lines (new pack version required)",
             " * Terminal now clears when exiting program",
@@ -943,7 +945,7 @@ vox_sequences = {
 		},
 		{
 			sound = "aci.vox.activation",
-			length = 1.2,
+			length = 1,
 		},
 		{
 			sound = "aci.vox.ill",
