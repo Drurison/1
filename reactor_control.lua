@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1',
 	    date = 'May 30, 2021',
-        build = 80,
+        build = 80
     },
     devs = {"Peekofwar"},
 	files = 
