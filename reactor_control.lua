@@ -8,6 +8,7 @@ local progInfo = {
 	    date = 'May 30, 2021',
         build = 80,
     },
+    devs = {"Peekofwar"},
 	files = 
 	{
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
