@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 52
+        build = 53
     },
 	files = 
 	{
@@ -44,7 +44,7 @@ progInfo.help = {
             colors.white,
             " F9 - Triggers crash screen",
         }
-        local lineStrings = 1
+        local lineStrings = 0
         for i=1, #lines do
             if type(lines[i]) == "string" then
                 lineStrings = lineStrings + 1
@@ -54,6 +54,7 @@ progInfo.help = {
         local scroll = 1
         local scrollMax = lineStrings-sh+1 
         if lineStrings <= sh then scrollMax = 1 end
+        printError(math.min(lineStrings,#lines)) sleep(1)
         while true do
             scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
