@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 76,
+        build = 77,
     },
 	files = 
 	{
@@ -458,6 +458,11 @@ systemMonitor = {
                 env.write("Reactor Offline")
             end
             if systemMonitor.alarms.master then
+                
+                if equipment.reactor.status then
+                    vox.queue(vox_sequences.manualIllAdvised)
+                end
+
                 if systemMonitor.vars.warnFlash then
                     env.setTextColor(colors.white)
                     env.setBackgroundColor(colors.black)
