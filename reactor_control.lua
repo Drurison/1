@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 66
+        build = 67
     },
 	files = 
 	{
@@ -343,7 +343,18 @@ gui = {
                 name = "Reset",
                 enabled = false,
                 run = function()
-                    
+                    for i=1, #gui.menus.main do
+                        if gui.menus.main[i].name == "Activate" then
+                            gui.menus.main[i].enabled = true
+                        elseif gui.menus.main[i].name == "Scram" then
+                            gui.menus.main[i].enabled = false
+                        elseif gui.menus.main[i].name == "Reset" then
+                            gui.menus.main[i].enabled = false
+                        end
+                    end
+                    systemMonitor.alarms.master = false
+                    systemMonitor.alarms.masterAlarmed = false
+                    systemMonitor.vars.forceCheck = true
                 end,
             },
             {
@@ -395,6 +406,8 @@ systemMonitor = {
         fuelMin = 1,
     },
     alarms = {
+        master = false,
+        masterAlarmed = false,
         radiation = false,
         radiation_CoolDown = 0,
     },
@@ -495,29 +508,41 @@ systemMonitor = {
             end
             env.write("Radiation: "..(radiation[2]))]]
 
-            if systemMonitor.vars.isActive and not status then
-                for i=1, #gui.menus.main do
-                    if gui.menus.main[i].name == "Activate" then
-                        gui.menus.main[i].enabled = true
-                    elseif gui.menus.main[i].name == "Scram" then
-                        gui.menus.main[i].enabled = false
-                    end
-                end
-                os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorDeactivated)
-                systemMonitor.vars.isActive = false
-            elseif not systemMonitor.vars.isActive and status then
+            if systemMonitor.alarms.master and not systemMonitor.alarms.masterAlarmed then
                 for i=1, #gui.menus.main do
                     if gui.menus.main[i].name == "Activate" then
                         gui.menus.main[i].enabled = false
                     elseif gui.menus.main[i].name == "Scram" then
+                        gui.menus.main[i].enabled = false
+                    elseif gui.menus.main[i].name == "Reset" then
                         gui.menus.main[i].enabled = true
-                        --gui.item = i
                     end
                 end
-                os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorActivated)
-                systemMonitor.vars.isActive = true
+            elseif not systemMonitor.alarms.masterAlarmed then
+                if systemMonitor.vars.isActive and not status then
+                    for i=1, #gui.menus.main do
+                        if gui.menus.main[i].name == "Activate" then
+                            gui.menus.main[i].enabled = true
+                        elseif gui.menus.main[i].name == "Scram" then
+                            gui.menus.main[i].enabled = false
+                        end
+                    end
+                    os.queueEvent("system_interrupt")
+                    vox.queue(vox_sequences.reactorDeactivated)
+                    systemMonitor.vars.isActive = false
+                elseif not systemMonitor.vars.isActive and status then
+                    for i=1, #gui.menus.main do
+                        if gui.menus.main[i].name == "Activate" then
+                            gui.menus.main[i].enabled = false
+                        elseif gui.menus.main[i].name == "Scram" then
+                            gui.menus.main[i].enabled = true
+                            --gui.item = i
+                        end
+                    end
+                    os.queueEvent("system_interrupt")
+                    vox.queue(vox_sequences.reactorActivated)
+                    systemMonitor.vars.isActive = true
+                end
             end
 
             if systemMonitor.vars.isNoFuel and fuel > 0 then
