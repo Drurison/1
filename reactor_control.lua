@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 68
+        build = 69
     },
 	files = 
 	{
@@ -346,6 +346,7 @@ gui = {
                 name = "Reset",
                 enabled = false,
                 run = function()
+                    vox.playlist = {}
                     for i=1, #gui.menus.main do
                         if gui.menus.main[i].name == "Activate" then
                             gui.menus.main[i].enabled = true
