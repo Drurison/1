@@ -1,0 +1,242 @@
+{
+	"server_sounds.test": {
+		"category": "master",
+		"sounds": [
+			"misc/test"
+		]
+	},
+	"aci.vox.access": {
+		"category": "master",
+		"sounds": [
+			"vox/access"
+		]
+	},
+	"aci.vox.activated": {
+		"category": "master",
+		"sounds": [
+			"vox/activated"
+		]
+	},
+	"aci.vox.activation": {
+		"category": "master",
+		"sounds": [
+			"vox/activation"
+		]
+	},
+	"aci.vox.advised": {
+		"category": "master",
+		"sounds": [
+			"vox/advised"
+		]
+	},
+	"aci.vox.alert": {
+		"category": "master",
+		"sounds": [
+			"vox/alert"
+		]
+	},
+	"aci.vox.beepboop": {
+		"category": "master",
+		"sounds": [
+			"vox/beepboop"
+		]
+	},
+	"aci.vox.bizwarn": {
+		"category": "master",
+		"sounds": [
+			"vox/bizwarn"
+		]
+	},
+	"aci.vox.buzwarn": {
+		"category": "master",
+		"sounds": [
+			"vox/buzwarn"
+		]
+	},
+	"aci.vox.check": {
+		"category": "master",
+		"sounds": [
+			"vox/check"
+		]
+	},
+	"aci.vox.coolant": {
+		"category": "master",
+		"sounds": [
+			"vox/coolant"
+		]
+	},
+	"aci.vox.deactivated": {
+		"category": "master",
+		"sounds": [
+			"vox/deactivated"
+		]
+	},
+	"aci.vox.deeoo": {
+		"category": "master",
+		"sounds": [
+			"vox/deeoo"
+		]
+	},
+	"aci.vox.denied": {
+		"category": "master",
+		"sounds": [
+			"vox/denied"
+		]
+	},
+	"aci.vox.depleted": {
+		"category": "master",
+		"sounds": [
+			"vox/depleted"
+		]
+	},
+	"aci.vox.doop": {
+		"category": "master",
+		"sounds": [
+			"vox/doop"
+		]
+	},
+	"aci.vox.excess": {
+		"category": "master",
+		"sounds": [
+			"vox/excess"
+		]
+	},
+	"aci.vox.excessive": {
+		"category": "master",
+		"sounds": [
+			"vox/excessive"
+		]
+	},
+	"aci.vox.fissile": {
+		"category": "master",
+		"sounds": [
+			"vox/fissile"
+		]
+	},
+	"aci.vox.fission": {
+		"category": "master",
+		"sounds": [
+			"vox/fission"
+		]
+	},
+	"aci.vox.for": {
+		"category": "master",
+		"sounds": [
+			"vox/for"
+		]
+	},
+	"aci.vox.fuel": {
+		"category": "master",
+		"sounds": [
+			"vox/fuel"
+		]
+	},
+	"aci.vox.granted": {
+		"category": "master",
+		"sounds": [
+			"vox/granted"
+		]
+	},
+	"aci.vox.high": {
+		"category": "master",
+		"sounds": [
+			"vox/high"
+		]
+	},
+	"aci.vox.ill": {
+		"category": "master",
+		"sounds": [
+			"vox/ill"
+		]
+	},
+	"aci.vox.insufficient": {
+		"category": "master",
+		"sounds": [
+			"vox/insufficient"
+		]
+	},
+	"aci.vox.malfunction": {
+		"category": "master",
+		"sounds": [
+			"vox/malfunction"
+		]
+	},
+	"aci.vox.meltdown": {
+		"category": "master",
+		"sounds": [
+			"vox/meltdown"
+		]
+	},
+	"aci.vox.nuclear": {
+		"category": "master",
+		"sounds": [
+			"vox/nuclear"
+		]
+	},
+	"aci.vox.overflow": {
+		"category": "master",
+		"sounds": [
+			"vox/overflow"
+		]
+	},
+	"aci.vox.radiation": {
+		"category": "master",
+		"sounds": [
+			"vox/radiation"
+		]
+	},
+	"aci.vox.reactor": {
+		"category": "master",
+		"sounds": [
+			"vox/reactor"
+		]
+	},
+	"aci.vox.status": {
+		"category": "master",
+		"sounds": [
+			"vox/status"
+		]
+	},
+	"aci.vox.steam": {
+		"category": "master",
+		"sounds": [
+			"vox/steam"
+		]
+	},
+	"aci.vox.temperature": {
+		"category": "master",
+		"sounds": [
+			"vox/temperature"
+		]
+	},
+	"aci.vox.terminal": {
+		"category": "master",
+		"sounds": [
+			"vox/terminal"
+		]
+	},
+	"aci.vox.turbine": {
+		"category": "master",
+		"sounds": [
+			"vox/turbine"
+		]
+	},
+	"aci.vox.warning": {
+		"category": "master",
+		"sounds": [
+			"vox/warning"
+		]
+	},
+	"aci.vox.waste": {
+		"category": "master",
+		"sounds": [
+			"vox/waste"
+		]
+	},
+	"aci.vox.woop": {
+		"category": "master",
+		"sounds": [
+			"vox/woop"
+		]
+	}
+}
