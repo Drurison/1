@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 60
+        build = 61
     },
 	files = 
 	{
@@ -155,7 +155,7 @@ end
 function barMeter(x, y, width, items, completed, text, text2, barColor, backgroundColor, terminal)
     if not terminal then terminal = term.current() end
 	--local percent = math.max(math.min(items / completed * 100,100),0)
-	local percent =clamp(0,100,items / completed * 100)
+	local percent = math.clamp(0,100,items / completed * 100)
 	local oldTColor = terminal.getTextColor()
 	local oldBColor = terminal.getBackgroundColor()
 	local text2 = text2 or ""
