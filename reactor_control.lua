@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 75,
+        build = 76,
     },
 	files = 
 	{
@@ -959,11 +959,7 @@ vox_sequences = {
 		{
 			sound = "aci.vox.for",
 			length = 0.5,
-		},
-		{
-			sound = "aci.vox.for",
-			length = 0.5,
-		},
+		},  
 		{
 			sound = "aci.vox.status",
 			length = 1,
