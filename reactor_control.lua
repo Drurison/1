@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 77,
+        build = 78,
     },
 	files = 
 	{
@@ -459,7 +459,7 @@ systemMonitor = {
             end
             if systemMonitor.alarms.master then
                 
-                if equipment.reactor.status then
+                if status then
                     vox.queue(vox_sequences.manualIllAdvised)
                 end
 
