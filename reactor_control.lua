@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 63
+        build = 64
     },
 	files = 
 	{
@@ -362,7 +362,7 @@ gui = {
                         equipment.reactor.scram()
                     end
                     dev.write("Rainbow Dash is best pegasus!") dev.sleep(0.25)
-                    error()
+                    quit()
                 end,
             },
         },
@@ -710,8 +710,7 @@ crashScreen = function(...)
         printError('\n\n\n'..err..'\n')
     end
 end
-
-quit = function()
+local quitProgram = false
     term.redirect(gui.terminal)
     term.setCursorPos(1,1)
     term.clear()
