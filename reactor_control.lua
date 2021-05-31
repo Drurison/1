@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 58
+        build = 59
     },
 	files = 
 	{
@@ -38,15 +38,9 @@ progInfo.help = {
             {colors.lightBlue,"Debugging hotkeys:"},
             " F9 - Triggers crash screen",
         }
-        local lineStrings = 0
-        for i=1, #lines do
-            if type(lines[i]) == "string" then
-                lineStrings = lineStrings + 1
-            end
-        end
         local scroll = 1
-        local scrollMax = lineStrings-sh+1
-        if lineStrings <= sh then scrollMax = 1 end
+        local scrollMax = #lines-sh+1
+        if #lines <= sh then scrollMax = 1 end
         while true do
             scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
@@ -67,8 +61,8 @@ progInfo.help = {
             for i=scroll, sh+scroll do
                 if lines[i] == nil then break end
                 if type(lines[i]) == "table" then
-                    term.setTextColor(lines[i][1])
-                    helpScreen.write(lines[i])
+                    helpScreen.setTextColor(lines[i][1])
+                    helpScreen.write(lines[i][2])
                 else
                     helpScreen.write(lines[i])
                 end
