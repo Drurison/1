@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 73,
+        build = 74,
     },
 	files = 
 	{
@@ -466,6 +466,7 @@ systemMonitor = {
                     env.setBackgroundColor(colors.red)
                 end
                 env.setCursorPos(1,1)
+                env.clearLine()
                 term.redirect(env)
                 cWrite("!! ===>> ALARM <<=== !!")
                 term.redirect(gui.rootTerminal)
