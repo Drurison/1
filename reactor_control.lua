@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 74,
+        build = 75,
     },
 	files = 
 	{
@@ -923,6 +923,52 @@ vox_sequences = {
 			length = 1,
 		},
 	},
+	manualIllAdvised = {
+		{
+			sound = "aci.vox.woop",
+			length = 0.5,
+		},
+		{
+			sound = "aci.vox.woop",
+			length = 0.75,
+		},
+		{
+			sound = "aci.vox.warning",
+			length = 1,
+		},
+		{
+			sound = "aci.vox.activation",
+			length = 1.2,
+		},
+		{
+			sound = "aci.vox.ill",
+			length = 0.4,
+		},
+		{
+			sound = "aci.vox.advised",
+			length = 1,
+		},
+		{
+			sound = "aci.vox.check",
+			length = 0.4,
+		},
+		{
+			sound = "aci.vox.terminal",
+			length = 0.6,
+		},
+		{
+			sound = "aci.vox.for",
+			length = 0.5,
+		},
+		{
+			sound = "aci.vox.for",
+			length = 0.5,
+		},
+		{
+			sound = "aci.vox.status",
+			length = 1,
+		},
+	},
 }
 
 if args.voxTest then
@@ -981,6 +1027,13 @@ if args.voxTest then
             enabled = true,
             run = function()
                 vox.queue(vox_sequences.highTemp)
+            end,
+        },
+        {
+            name = "test vox manualIllAdvised",
+            enabled = true,
+            run = function()
+                vox.queue(vox_sequences.manualIllAdvised)
             end,
         },
         {
