@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 67
+        build = 68
     },
 	files = 
 	{
@@ -31,11 +31,14 @@ progInfo.help = {
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
             "",
+        -- "|                                                    |"
             {colors.lightBlue,"Changelong v1.0.1:"},
             " + Added scrollable help screen",
             " * Now checks statuses before hitting activate",
             " * Updated VOX lines (new pack version required)",
             " * Terminal now clears when exiting program",
+            " * Activation is not blocked from terminal when an ",
+            "   alarm is raised.",
             "",
             {colors.lightBlue,"Debugging hotkeys:"},
             " F9 - Triggers crash screen",
@@ -592,6 +595,9 @@ systemMonitor = {
 
             if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
                 equipment.reactor.scram()
+            end
+            if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
+                systemMonitor.alarms.master = true
             end
 --  600 K moderate
 -- 1000 K high
