@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 53
+        build = 54
     },
 	files = 
 	{
@@ -74,6 +74,7 @@ progInfo.help = {
             helpScreen.clear()
             color = false
             for i=scroll, sh+scroll do
+                write(i) sleep(1)
                 if lines[i] == nil then break end
                 if type(lines[i]) == "number" then 
                     color = lines[i]
