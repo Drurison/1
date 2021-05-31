@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 70,
+        build = 71,
     },
 	files = 
 	{
@@ -459,18 +459,18 @@ systemMonitor = {
             end
             if systemMonitor.alarms.master then
                 if systemMonitor.vars.warnFlash then
-                    env.setTextColor(colors.white)
-                    env.setBackgroundColor(colors.black)
+                    term.setTextColor(colors.white)
+                    term.setBackgroundColor(colors.black)
                 else
-                    env.setTextColor(colors.white)
-                    env.setBackgroundColor(colors.black)
+                    term.setTextColor(colors.white)
+                    term.setBackgroundColor(colors.black)
                 end
-                env.setCursorPos(1,1)
+                term.setCursorPos(1,1)
                 term.redirect(env)
                 cWrite("!! ===>> ALARM <<=== !!")
                 term.redirect(gui.rootTerminal)
+                term.setBackgroundColor(colors.black)
             end
-            env.setBackgroundColor(colors.black)
             env.setCursorPos(2,5)
             env.setTextColor(colors.white)
             --env.write("Temp: "..math.floor(temp).."K")
