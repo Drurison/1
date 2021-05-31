@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 62
+        build = 63
     },
 	files = 
 	{
@@ -35,6 +35,7 @@ progInfo.help = {
             " + Added scrollable help screen",
             " * Now checks statuses before hitting activate",
             " * Updated VOX lines (new pack version required)",
+            " * Terminal now clears when exiting program",
             "",
             {colors.lightBlue,"Debugging hotkeys:"},
             " F9 - Triggers crash screen",
@@ -680,6 +681,7 @@ startup = {
             equipment.reactor.scram()
             printError("\nREACTOR IS ACTIVE; SCRAMMING...")
             sleep(1)
+            quit()
         end
     end,
     run = function()
