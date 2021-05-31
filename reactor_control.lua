@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 55
+        build = 56
     },
 	files = 
 	{
@@ -54,7 +54,7 @@ progInfo.help = {
         local scroll = 1
         local scrollMax = lineStrings-sh+1 
         if lineStrings <= sh then scrollMax = 1 end
-        printError(math.min(lineStrings,#lines)..","..#lines) sleep(2)
+        printError(math.min(lineStrings,#lines)..","..#lines..","..lineStrings) sleep(2)
         while true do
             scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
@@ -74,7 +74,7 @@ progInfo.help = {
             helpScreen.clear()
             color = false
             for i=scroll, sh+scroll do
-                write(i) sleep(1)
+                write(i) sleep(0.4)
                 if lines[i] == nil then break end
                 if type(lines[i]) == "number" then 
                     color = lines[i]
