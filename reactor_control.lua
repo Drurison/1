@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 61
+        build = 62
     },
 	files = 
 	{
@@ -338,6 +338,13 @@ gui = {
                 end,
             },
             {
+                name = "Reset",
+                enabled = false,
+                run = function()
+                    
+                end,
+            },
+            {
                 name = "Config",
                 enabled = false,
                 run = function()
@@ -362,6 +369,7 @@ gui = {
 --3,1
 systemMonitor = {
     vars = {
+        forceCheck = true,
         isActive = false,
         isTempCritical = false,
         isDamaged = false,
@@ -512,35 +520,35 @@ systemMonitor = {
 
             if systemMonitor.vars.isNoFuel and fuel > 0 then
                 systemMonitor.vars.isNoFuel = false
-            elseif fuel == 0 and status then
+            elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoFuel = true
                 vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
             end
 
             if systemMonitor.vars.isNoCoolant and coolant > 0 then
                 systemMonitor.vars.isNoCoolant = false
-            elseif coolant == 0 and status then
+            elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoCoolant = true
                 vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
             if systemMonitor.vars.isSteamFull and steam < steam_cap-500 then
                 systemMonitor.vars.isSteamFull = false
-            elseif steam >= steam_cap-500 and status then
+            elseif steam >= steam_cap-500 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isSteamFull = true
                 vox.queue(vox_sequences.overflowSteam) dev.pos(11,1) dev.write('VOX overflowSteam')
             end
 
             if systemMonitor.vars.isWasteFull and waste < waste_cap-500 then
                 systemMonitor.vars.isWasteFull = false
-            elseif waste >= waste_cap-500 and status then
+            elseif waste >= waste_cap-500 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isWasteFull = true
                 vox.queue(vox_sequences.overflowWaste) dev.pos(11,1) dev.write('VOX overflowWaste')
             end
 
             if systemMonitor.vars.isTempCritical and temp < 1000 then
                 systemMonitor.vars.isTempCritical = false
-            elseif temp >= 1000 and status then
+            elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isTempCritical = true
                 vox.queue(vox_sequences.highTemp) dev.pos(11,1) dev.write('VOX highTemp')
             end
@@ -562,6 +570,7 @@ systemMonitor = {
 -- 1000 K high
 -- 1200 K critical
             systemMonitor.vars.warnFlash = not systemMonitor.vars.warnFlash
+            if systemMonitor.vars.forceCheck then systemMonitor.vars.forceCheck = false end
             sleep(0.75)
         end
     end,
