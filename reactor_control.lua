@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 57
+        build = 58
     },
 	files = 
 	{
@@ -22,26 +22,20 @@ progInfo.help = {
         local helpScreen = window.create(term.current(),1,1,w,h-1)
         local sw, sh = helpScreen.getSize()
         local lines = {
-            progInfo.appName,
+            {colors.yellow,progInfo.appName},
             "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
             "",
-            colors.lightBlue,
-            "Switches:",
-            colors.white,
+            {colors.lightBlue,"Switches:"},
             " /dev   - Activates dev functions",
             " /debug - Triggers debugging keybinds",
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
             "",
-            colors.lightBlue,
-            "Changelong v1.0.1:",
-            colors.white,
+            {colors.lightBlue,"Changelong v1.0.1:"},
             " + Added scrollable help screen",
             " * Updated VOX lines (new pack version required)",
             "",
-            colors.lightBlue,
-            "Debugging hotkeys:",
-            colors.white,
+            {colors.lightBlue,"Debugging hotkeys:"},
             " F9 - Triggers crash screen",
         }
         local lineStrings = 0
@@ -50,11 +44,9 @@ progInfo.help = {
                 lineStrings = lineStrings + 1
             end
         end
-        local color = false
         local scroll = 1
-        local scrollMax = lineStrings-sh+1 
+        local scrollMax = lineStrings-sh+1
         if lineStrings <= sh then scrollMax = 1 end
-        printError(math.min(sh+scroll)..","..#lines..","..lineStrings) sleep(2)
         while true do
             scroll = math.clamp(1,scrollMax,scroll)
             term.setCursorPos(1,h)
@@ -72,18 +64,16 @@ progInfo.help = {
             helpScreen.setCursorPos(1,1)
             helpScreen.setTextColor(colors.white)
             helpScreen.clear()
-            color = false
             for i=scroll, sh+scroll do
-                write(i) sleep(0.4)
                 if lines[i] == nil then break end
-                if type(lines[i]) == "number" then 
-                    color = lines[i]
-                else
-                    if color then helpScreen.setTextColor(color) end
+                if type(lines[i]) == "table" then
+                    term.setTextColor(lines[i][1])
                     helpScreen.write(lines[i])
-                    local x,y = helpScreen.getCursorPos()
-                    helpScreen.setCursorPos(1,y+1)
+                else
+                    helpScreen.write(lines[i])
                 end
+                local x,y = helpScreen.getCursorPos()
+                helpScreen.setCursorPos(1,y+1)
             end
             helpScreen.setCursorPos(1,h)
             helpScreen.write(scroll..","..sh+scroll)
