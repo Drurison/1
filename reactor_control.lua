@@ -33,6 +33,7 @@ progInfo.help = {
             "",
             {colors.lightBlue,"Changelong v1.0.1:"},
             " + Added scrollable help screen",
+            " * Now checks statuses before hitting activate"
             " * Updated VOX lines (new pack version required)",
             "",
             {colors.lightBlue,"Debugging hotkeys:"},
