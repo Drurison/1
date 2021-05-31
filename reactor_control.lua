@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 64
+        build = 65
     },
 	files = 
 	{
@@ -710,7 +710,7 @@ crashScreen = function(...)
         printError('\n\n\n'..err..'\n')
     end
 end
-local quitProgram = false
+quit = function()
     term.redirect(gui.terminal)
     term.setCursorPos(1,1)
     term.clear()
