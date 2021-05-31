@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.1a1',
 	    date = 'May 30, 2021',
-        build = 65
+        build = 66
     },
 	files = 
 	{
@@ -711,7 +711,7 @@ crashScreen = function(...)
     end
 end
 quit = function()
-    term.redirect(gui.terminal)
+    if gui.rootTerminal then term.redirect(gui.rootTerminal) end
     term.setCursorPos(1,1)
     term.clear()
     error()
