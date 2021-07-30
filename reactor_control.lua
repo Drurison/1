@@ -4,9 +4,9 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.0.1a1',
-	    date = 'May 30, 2021',
-        build = 80,
+        string = '1.1.0a1',
+	    date = 'July 30, 2021',
+        build = 1,
     },
 	files = 
 	{
@@ -611,7 +611,7 @@ systemMonitor = {
                 systemMonitor.alarms.radiation = true
             end
             if systemMonitor.alarms.radiation and systemMonitor.alarms.radiation_CoolDown == 0 then
-                intercom.playSound("aci.vox.bizwarn")
+                intercom.playSound("aci.vox.voice_legacy.bizwarn")
                 systemMonitor.alarms.radiation_CoolDown = 5
             elseif systemMonitor.alarms.radiation_CoolDown > 0 then
                 systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
@@ -775,201 +775,201 @@ end
 vox_sequences = {
 	reactorActivated = {
 		{
-			sound = "aci.vox.deeoo",
+			sound = "aci.vox.voice_legacy.deeoo",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.fission",
+			sound = "aci.vox.voice_legacy.fission",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.reactor",
+			sound = "aci.vox.voice_legacy.reactor",
 			length = 0.85,
 		},
 		{
-			sound = "aci.vox.activated",
+			sound = "aci.vox.voice_legacy.activated",
 			length = 1,
 		},
 	},
 	reactorDeactivated = {
 		{
-			sound = "aci.vox.deeoo",
+			sound = "aci.vox.voice_legacy.deeoo",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.fission",
+			sound = "aci.vox.voice_legacy.fission",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.reactor",
+			sound = "aci.vox.voice_legacy.reactor",
 			length = 0.85,
 		},
 		{
-			sound = "aci.vox.deactivated",
+			sound = "aci.vox.voice_legacy.deactivated",
 			length = 1,
 		},
 	},
 	overflowWaste = {
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.4,
 		},
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.warning",
+			sound = "aci.vox.voice_legacy.warning",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.waste",
+			sound = "aci.vox.voice_legacy.waste",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.overflow",
+			sound = "aci.vox.voice_legacy.overflow",
 			length = 1,
 		},
 	},
 	overflowSteam = {
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.4,
 		},
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.warning",
+			sound = "aci.vox.voice_legacy.warning",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.steam",
+			sound = "aci.vox.voice_legacy.steam",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.overflow",
+			sound = "aci.vox.voice_legacy.overflow",
 			length = 1,
 		},
 	},
 	noFuel = {
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.4,
 		},
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.warning",
+			sound = "aci.vox.voice_legacy.warning",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.malfunction",
+			sound = "aci.vox.voice_legacy.malfunction",
 			length = 1.25,
 		},
 		{
-			sound = "aci.vox.fuel",
+			sound = "aci.vox.voice_legacy.fuel",
 			length = 0.6,
 		},
 		{
-			sound = "aci.vox.depleted",
+			sound = "aci.vox.voice_legacy.depleted",
 			length = 1,
 		},
 	},
 	noCoolant = {
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.4,
 		},
 		{
-			sound = "aci.vox.buzwarn",
+			sound = "aci.vox.voice_legacy.buzwarn",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.warning",
+			sound = "aci.vox.voice_legacy.warning",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.malfunction",
+			sound = "aci.vox.voice_legacy.malfunction",
 			length = 1.25,
 		},
 		{
-			sound = "aci.vox.insufficient",
+			sound = "aci.vox.voice_legacy.insufficient",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.coolant",
+			sound = "aci.vox.voice_legacy.coolant",
 			length = 1,
 		},
 	},
 	highTemp = {
 		{
-			sound = "aci.vox.woop",
+			sound = "aci.vox.voice_legacy.woop",
 			length = 0.5,
 		},
 		{
-			sound = "aci.vox.woop",
+			sound = "aci.vox.voice_legacy.woop",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.warning",
+			sound = "aci.vox.voice_legacy.warning",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.high",
+			sound = "aci.vox.voice_legacy.high",
 			length = 0.5,
 		},
 		{
-			sound = "aci.vox.reactor",
+			sound = "aci.vox.voice_legacy.reactor",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.temperature",
+			sound = "aci.vox.voice_legacy.temperature",
 			length = 1,
 		},
 	},
 	manualIllAdvised = {
 		{
-			sound = "aci.vox.woop",
+			sound = "aci.vox.voice_legacy.woop",
 			length = 0.5,
 		},
 		{
-			sound = "aci.vox.woop",
+			sound = "aci.vox.voice_legacy.woop",
 			length = 0.75,
 		},
 		{
-			sound = "aci.vox.warning",
+			sound = "aci.vox.voice_legacy.warning",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.activation",
+			sound = "aci.vox.voice_legacy.activation",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.ill",
+			sound = "aci.vox.voice_legacy.ill",
 			length = 0.4,
 		},
 		{
-			sound = "aci.vox.advised",
+			sound = "aci.vox.voice_legacy.advised",
 			length = 1,
 		},
 		{
-			sound = "aci.vox.check",
+			sound = "aci.vox.voice_legacy.check",
 			length = 0.4,
 		},
 		{
-			sound = "aci.vox.terminal",
+			sound = "aci.vox.voice_legacy.terminal",
 			length = 0.6,
 		},
 		{
-			sound = "aci.vox.for",
+			sound = "aci.vox.voice_legacy.for",
 			length = 0.5,
 		},  
 		{
-			sound = "aci.vox.status",
+			sound = "aci.vox.voice_legacy.status",
 			length = 1,
 		},
 	},
@@ -981,7 +981,7 @@ if args.voxTest then
             name = "-- VOX TEST MODE --",
             enabled = true,
             run = function()
-                intercom.playSound("aci.vox.doop")
+                intercom.playSound("aci.vox.voice_legacy.doop")
             end,
         },
         {
