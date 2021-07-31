@@ -33,7 +33,7 @@ progInfo.help = {
             " /test - Triggers temporary tests (if any)",
             "",
         -- "|                                                    |"
-            {colors.lightBlue,"Changelong v1.0.1:"},
+            {colors.lightBlue,"Changelong v1.0.2:"},
             " * Moved env.clear() below reactor data collection.",
             "   in an attempt to reduce potential flickering.",
             {colors.lightBlue,"Changelong v1.0.1:"},
