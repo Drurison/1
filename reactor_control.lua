@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a1',
 	    date = 'July 30, 2021',
-        build = 1,
+        build = 2,
     },
 	files = 
 	{
@@ -32,6 +32,9 @@ progInfo.help = {
             " /test - Triggers temporary tests (if any)",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.0.2:"},
+            " * Moved env.clear() below reactor data collection.",
+            "   in an attempt to reduce potential flickering.",
             {colors.lightBlue,"Changelong v1.0.1:"},
             " + Added scrollable help screen",
             " + Added VOX sebtece for manual activation when",
@@ -425,9 +428,6 @@ systemMonitor = {
         --systemMonitor.warnConfig.setup()
 
         while true do
-            env.clear()
-            env.setCursorPos(2,2)
-
             if not peripheral.isPresent(peripheral.getName(equipment.reactor)) then
                 error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
@@ -452,6 +452,10 @@ systemMonitor = {
             local temp = equipment.reactor.getTemperature() -- Kelvin
 
             local damage = equipment.reactor.getDamagePercent()
+
+            env.clear()
+            env.setCursorPos(2,2)
+
             if status then
                 env.setTextColor(colors.green)
                 env.write("Reactor Online") 
