@@ -4,9 +4,9 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.0.1',
-	    date = 'May 30, 2021',
-        build = 80,
+        string = '1.0.2',
+	    date = 'July 30, 2021',
+        build = 1,
     },
     devs = {"Peekofwar"},
 	files = 
@@ -33,6 +33,9 @@ progInfo.help = {
             " /test - Triggers temporary tests (if any)",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.0.1:"},
+            " * Moved env.clear() below reactor data collection.",
+            "   in an attempt to reduce potential flickering.",
             {colors.lightBlue,"Changelong v1.0.1:"},
             " + Added scrollable help screen",
             " + Added VOX sentence for manual activation when",
@@ -426,9 +429,6 @@ systemMonitor = {
         --systemMonitor.warnConfig.setup()
 
         while true do
-            env.clear()
-            env.setCursorPos(2,2)
-
             if not peripheral.isPresent(peripheral.getName(equipment.reactor)) then
                 error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
@@ -453,6 +453,10 @@ systemMonitor = {
             local temp = equipment.reactor.getTemperature() -- Kelvin
 
             local damage = equipment.reactor.getDamagePercent()
+
+            env.clear()
+            env.setCursorPos(2,2)
+
             if status then
                 env.setTextColor(colors.green)
                 env.write("Reactor Online") 
