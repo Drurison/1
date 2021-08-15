@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 4,
+        build = 5,
     },
 	files = 
 	{
@@ -431,7 +431,8 @@ systemMonitor = {
         local disconnect_warn_state = false
         while true do
             while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
-                term.clear()
+                term.redirect(env)
+                env.clear()
                 disconnect_warn_state = not disconnect_warn_state
                 if disconnect_warn_state then 
                     term.setTextColor(colors.red)
@@ -445,6 +446,7 @@ systemMonitor = {
                 term.setCursorPos(1,7)
                 cWrite("Check reactor status immediately.")
                 sleep(0.25)
+                term.redirect(gui.rootTerminal)
                 --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
 
