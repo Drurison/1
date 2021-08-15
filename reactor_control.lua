@@ -4,9 +4,9 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.1.0a1',
+        string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 3,
+        build = 4,
     },
 	files = 
 	{
@@ -428,10 +428,24 @@ systemMonitor = {
         sleep(1) os.queueEvent("system_interrupt")
         local w,h = env.getSize()
         --systemMonitor.warnConfig.setup()
-
+        local disconnect_warn_state = false
         while true do
-            if not peripheral.isPresent(peripheral.getName(equipment.reactor)) then
-                error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
+            while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
+                term.clear()
+                disconnect_warn_state = not disconnect_warn_state
+                if disconnect_warn_state then 
+                    term.setTextColor(colors.red)
+                else
+                    term.setTextColor(colors.white)
+                end
+                term.setCursorPos(1,4)
+                cWrite(">>> !!! WARNING !!! <<<")
+                term.setCursorPos(1,6)
+                cWrite("Reactor diconnected from network!")
+                term.setCursorPos(1,7)
+                cWrite("Check reactor status immediately.")
+                sleep(0.25)
+                --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
 
             local status = equipment.reactor.getStatus()
