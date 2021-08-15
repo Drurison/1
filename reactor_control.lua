@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 9,
+        build = 10,
     },
 	files = 
 	{
@@ -429,19 +429,19 @@ systemMonitor = {
 
             systemMonitor.data.fuel = equipment.reactor.getFuel()
             systemMonitor.data.fuel_cap = equipment.reactor.getFuelCapacity()
-            systemMonitor.data.fuel_percent = fuel/fuel_cap
+            systemMonitor.data.fuel_percent = systemMonitor.data.fuel/systemMonitor.data.fuel_cap
             systemMonitor.data.waste = equipment.reactor.getWaste()
             systemMonitor.data.waste_cap = equipment.reactor.getWasteCapacity()
-            systemMonitor.data.waste_percent = waste/waste_cap
+            systemMonitor.data.waste_percent = systemMonitor.data.waste/systemMonitor.data.waste_cap
 
             systemMonitor.data.coolant = equipment.reactor.getCoolant()
-            systemMonitor.data.coolant = coolant.amount
+            systemMonitor.data.coolant = systemMonitor.data.coolant.amount
             systemMonitor.data.coolant_cap = equipment.reactor.getCoolantCapacity()
-            systemMonitor.data.coolant_percent = coolant/coolant_cap
+            systemMonitor.data.coolant_percent = systemMonitor.data.coolant/systemMonitor.data.coolant_cap
             systemMonitor.data.steam = equipment.reactor.getHeatedCoolant()
-            systemMonitor.data.steam = steam.amount
+            systemMonitor.data.steam = systemMonitor.data.steam.amount
             systemMonitor.data.steam_cap = equipment.reactor.getHeatedCoolantCapacity()
-            systemMonitor.data.steam_percent = steam/steam_cap
+            systemMonitor.data.steam_percent = systemMonitor.data.steam/systemMonitor.data.steam_cap
             systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
 
             systemMonitor.data.damage = equipment.reactor.getDamagePercent()
