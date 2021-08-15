@@ -4,8 +4,8 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.0.2',
-	    date = 'July 30, 2021',
+        string = '1.0.4',
+	    date = 'August 15, 2021',
         build = 1,
     },
     devs = {"Peekofwar"},
@@ -33,6 +33,9 @@ progInfo.help = {
             " /test - Triggers temporary tests (if any)",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.0.3:"},
+            " * Changed reactor type string for Advanced",
+            "   Peripherals 0.7r (peripheral proxy was removed)",
             {colors.lightBlue,"Changelong v1.0.2:"},
             " * Moved env.clear() below reactor data collection.",
             "   in an attempt to reduce potential flickering.",
@@ -653,7 +656,7 @@ listen = {
 }
 
 equipment = {
-    reactor = peripheral.find("peripheralProxy:fissionReactor"),
+    reactor = peripheral.find("fissionReactor"),
     radiationSensors = {},
     findSensors = function()
         local attached = peripheral.getNames()
