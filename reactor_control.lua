@@ -5,8 +5,8 @@ local progInfo = {
 	appName = 'ACI Fission Reactor Control',
 	version = {
         string = '1.1.0a1',
-	    date = 'July 30, 2021',
-        build = 2,
+	    date = 'August 14, 2021',
+        build = 3,
     },
 	files = 
 	{
@@ -652,7 +652,7 @@ listen = {
 }
 
 equipment = {
-    reactor = peripheral.find("peripheralProxy:fissionReactor"),
+    reactor = peripheral.find("fissionReactor"),
     radiationSensors = {},
     findSensors = function()
         local attached = peripheral.getNames()
