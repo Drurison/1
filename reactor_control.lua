@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 7,
+        build = 8,
     },
 	files = 
 	{
@@ -785,7 +785,7 @@ startup = {
             local process_id = multishell.getCurrent()
             multishell.setTitle(process_id,"Reactor Control")
         end
-        parallel.waitForAll(listen.fallbackTerminate,systemMonitor.run,gui.run,vox.run)
+        parallel.waitForAll(listen.fallbackTerminate,systemMonitor.thread_main,systemMonitor.thread_input)
     end,
 }
 crashScreen = function(...)
