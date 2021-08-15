@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 13,
+        build = 14,
     },
 	files = 
 	{
@@ -32,8 +32,9 @@ progInfo.help = {
             " /test - Triggers temporary tests (if any)",
             "",
         -- "|                                                    |"
-            {colors.lightBlue,"Changelong v1.1.0:"},
-            " * Updated code for Advanced Peripherals v0.7r",
+            {colors.lightBlue,"Changelong v1.0.3:"},
+            " * Changed reactor type string for Advanced",
+            "   Peripherals 0.7r (peripheral proxy was removed)",
             {colors.lightBlue,"Changelong v1.0.2:"},
             " * Moved env.clear() below reactor data collection.",
             "   in an attempt to reduce potential flickering.",
