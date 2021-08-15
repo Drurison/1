@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 8,
+        build = 9,
     },
 	files = 
 	{
@@ -404,6 +404,27 @@ systemMonitor = {
     thread_main = function()
         if args.voxTest then return end
         while true do
+            while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
+                systemMonitor.alarms.master = true
+                systemMonitor.alarms.disconnected = true
+                term.redirect(systemMonitor.environments.monitor)
+                systemMonitor.environments.monitor.clear()
+                disconnect_warn_state = not disconnect_warn_state
+                if disconnect_warn_state then 
+                    term.setTextColor(colors.red)
+                else
+                    term.setTextColor(colors.white)
+                end
+                term.setCursorPos(1,4)
+                cWrite(">>> !!! WARNING !!! <<<")
+                term.setCursorPos(1,6)
+                cWrite("Reactor diconnected from network!")
+                term.setCursorPos(1,7)
+                cWrite("Check reactor status immediately.")
+                sleep(0.25)
+                term.redirect(gui.rootTerminal)
+                --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
+            end
             systemMonitor.data.status = equipment.reactor.getStatus()
 
             systemMonitor.data.fuel = equipment.reactor.getFuel()
@@ -448,28 +469,6 @@ systemMonitor = {
         sleep(1) os.queueEvent("system_interrupt")
         local w,h = env.getSize()
         local disconnect_warn_state = false
-
-        while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
-            systemMonitor.alarms.master = true
-            systemMonitor.alarms.disconnected = true
-            term.redirect(env)
-            env.clear()
-            disconnect_warn_state = not disconnect_warn_state
-            if disconnect_warn_state then 
-                term.setTextColor(colors.red)
-            else
-                term.setTextColor(colors.white)
-            end
-            term.setCursorPos(1,4)
-            cWrite(">>> !!! WARNING !!! <<<")
-            term.setCursorPos(1,6)
-            cWrite("Reactor diconnected from network!")
-            term.setCursorPos(1,7)
-            cWrite("Check reactor status immediately.")
-            sleep(0.25)
-            term.redirect(gui.rootTerminal)
-            --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
-        end
 
         local status = equipment.reactor.getStatus()
 
