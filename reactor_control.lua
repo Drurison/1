@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 5,
+        build = 6,
     },
 	files = 
 	{
@@ -431,6 +431,7 @@ systemMonitor = {
         local disconnect_warn_state = false
         while true do
             while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
+                systemMonitor.alarms.master = true
                 term.redirect(env)
                 env.clear()
                 disconnect_warn_state = not disconnect_warn_state
