@@ -32,6 +32,8 @@ progInfo.help = {
             " /test - Triggers temporary tests (if any)",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.1.0:"},
+            " * Updated code for Advanced Peripherals v0.7r",
             {colors.lightBlue,"Changelong v1.0.2:"},
             " * Moved env.clear() below reactor data collection.",
             "   in an attempt to reduce potential flickering.",
