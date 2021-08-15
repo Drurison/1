@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 12,
+        build = 13,
     },
 	files = 
 	{
@@ -446,7 +446,7 @@ systemMonitor = {
 
             systemMonitor.data.damage = equipment.reactor.getDamagePercent()
 
-            systemMonitor.environments.monitor.write("DEBUG: Main thread is running...")
+            error("Program under heavy rewrite...",0)
 
             os.queueEvent("r.system_screen")
             sleep(0.05)
