@@ -227,10 +227,6 @@ gui = {
 
             local env = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
             gui.basic.draw(env)
-            
-            
-            local next_valid = false
-            local prev_valid = false
 
             while true do
                 local event = table.pack(os.pullEvent())
@@ -243,31 +239,12 @@ gui = {
                         else
                             gui.item = gui.item + 1
                         end
-                        --[[for i=gui.item+1, #gui.menus.main do
-                            if gui.menus.main[i].enabled then
-                                next_valid = i
-                                break
-                            end
-                        end
-                        if next_valid or true then
-                            gui.item = next_valid
-                            next_valid = false
-                        end]]
                     elseif key_raw == keys.up then
                         if gui.item-1 < 1 then
                             gui.item = #gui.menus.main
                         else
                             gui.item = gui.item - 1
                         end
-                        --[[for i=1, gui.item-1 do
-                            if gui.menus.main[i].enabled then
-                                prev_valid = i
-                            end
-                        end
-                        if prev_valid or true then
-                            gui.item = prev_valid
-                            prev_valid = false
-                        end]]
                     elseif (key_raw == keys.enter or key_raw == keys.numPadEnter) and gui.menus.main[gui.item].enabled then
                         gui.menus.main[gui.item].run()
                     end
@@ -403,6 +380,7 @@ systemMonitor = {
         isSteamFull = false,
         warnFlash = false,
     },
+    data = {},
     warnConfig = {
         setup = function()
             if peripheral.isPresent(peripheral.getName(equipment.reactor)) then
@@ -421,238 +399,278 @@ systemMonitor = {
         masterAlarmed = false,
         radiation = false,
         radiation_CoolDown = 0,
+        disconnected = false
     },
-    run = function()
+    thread_main = function()
         if args.voxTest then return end
-        local env = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos))
+        while true do
+            systemMonitor.data.status = equipment.reactor.getStatus()
+
+            systemMonitor.data.fuel = equipment.reactor.getFuel()
+            systemMonitor.data.fuel_cap = equipment.reactor.getFuelCapacity()
+            systemMonitor.data.fuel_percent = fuel/fuel_cap
+            systemMonitor.data.waste = equipment.reactor.getWaste()
+            systemMonitor.data.waste_cap = equipment.reactor.getWasteCapacity()
+            systemMonitor.data.waste_percent = waste/waste_cap
+
+            systemMonitor.data.coolant = equipment.reactor.getCoolant()
+            systemMonitor.data.coolant = coolant.amount
+            systemMonitor.data.coolant_cap = equipment.reactor.getCoolantCapacity()
+            systemMonitor.data.coolant_percent = coolant/coolant_cap
+            systemMonitor.data.steam = equipment.reactor.getHeatedCoolant()
+            systemMonitor.data.steam = steam.amount
+            systemMonitor.data.steam_cap = equipment.reactor.getHeatedCoolantCapacity()
+            systemMonitor.data.steam_percent = steam/steam_cap
+            systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
+
+            systemMonitor.data.damage = equipment.reactor.getDamagePercent()
+
+            os.queueEvent("r.system_screen")
+            sleep(0.05)
+        end
+    end,
+    thread_input = function()
+        while true do
+            local event = {os.pullEvent()}
+            if event == "r.system_screen" then
+                --draw screen here
+            elseif event == "key" then
+                --handle key stuff here
+            end
+        end
+    end,
+    environments = {
+        monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos)),
+        menu = false,
+    }
+    draw_monitor = function()
+        local env = systemMonitor.environments.monitor
         sleep(1) os.queueEvent("system_interrupt")
         local w,h = env.getSize()
-        --systemMonitor.warnConfig.setup()
         local disconnect_warn_state = false
-        while true do
-            while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
-                systemMonitor.alarms.master = true
-                term.redirect(env)
-                env.clear()
-                disconnect_warn_state = not disconnect_warn_state
-                if disconnect_warn_state then 
-                    term.setTextColor(colors.red)
-                else
-                    term.setTextColor(colors.white)
-                end
-                term.setCursorPos(1,4)
-                cWrite(">>> !!! WARNING !!! <<<")
-                term.setCursorPos(1,6)
-                cWrite("Reactor diconnected from network!")
-                term.setCursorPos(1,7)
-                cWrite("Check reactor status immediately.")
-                sleep(0.25)
-                term.redirect(gui.rootTerminal)
-                --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
-            end
 
-            local status = equipment.reactor.getStatus()
-
-            local fuel = equipment.reactor.getFuel()
-            local fuel_cap = equipment.reactor.getFuelCapacity()
-            local fuel_percent = fuel/fuel_cap
-            local waste = equipment.reactor.getWaste()
-            local waste_cap = equipment.reactor.getWasteCapacity()
-            local waste_percent = waste/waste_cap
-
-            local coolant = equipment.reactor.getCoolant()
-            coolant = coolant.amount
-            local coolant_cap = equipment.reactor.getCoolantCapacity()
-            local coolant_percent = coolant/coolant_cap
-            local steam = equipment.reactor.getHeatedCoolant()
-            steam = steam.amount
-            local steam_cap = equipment.reactor.getHeatedCoolantCapacity()
-            local steam_percent = steam/steam_cap
-            local temp = equipment.reactor.getTemperature() -- Kelvin
-
-            local damage = equipment.reactor.getDamagePercent()
-
+        while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
+            systemMonitor.alarms.master = true
+            systemMonitor.alarms.disconnected = true
+            term.redirect(env)
             env.clear()
-            env.setCursorPos(2,2)
+            disconnect_warn_state = not disconnect_warn_state
+            if disconnect_warn_state then 
+                term.setTextColor(colors.red)
+            else
+                term.setTextColor(colors.white)
+            end
+            term.setCursorPos(1,4)
+            cWrite(">>> !!! WARNING !!! <<<")
+            term.setCursorPos(1,6)
+            cWrite("Reactor diconnected from network!")
+            term.setCursorPos(1,7)
+            cWrite("Check reactor status immediately.")
+            sleep(0.25)
+            term.redirect(gui.rootTerminal)
+            --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
+        end
 
+        local status = equipment.reactor.getStatus()
+
+        local fuel = systemMonitor.data.fuel
+        local fuel_cap = systemMonitor.data.fuel_cap
+        local fuel_percent = systemMonitor.data.fuel_percent
+        local waste = systemMonitor.data.waste
+        local waste_cap = systemMonitor.data.waste_cap
+        local waste_percent = systemMonitor.data.waste_percent
+
+        local coolant = systemMonitor.data.coolant
+        local coolant_cap = systemMonitor.data.coolant_cap
+        local coolant_percent = systemMonitor.data.coolant_percent
+        local steam = systemMonitor.data.steam
+        local steam_cap = systemMonitor.data.steam_cap
+        local steam_percent = systemMonitor.data.steam_percent
+        local temp = systemMonitor.data.temp -- Kelvin
+
+        local damage = systemMonitor.data.damage
+
+        env.clear()
+        env.setCursorPos(2,2)
+
+        if status then
+            env.setTextColor(colors.green)
+            env.write("Reactor Online") 
+        else
+            env.setTextColor(colors.red)
+            env.write("Reactor Offline")
+        end
+        if systemMonitor.alarms.master then
+            
             if status then
-                env.setTextColor(colors.green)
-                env.write("Reactor Online") 
-            else
-                env.setTextColor(colors.red)
-                env.write("Reactor Offline")
+                equipment.reactor.scram()
+                vox.queue(vox_sequences.manualIllAdvised)
             end
-            if systemMonitor.alarms.master then
-                
-                if status then
-                    equipment.reactor.scram()
-                    vox.queue(vox_sequences.manualIllAdvised)
-                end
 
-                if systemMonitor.vars.warnFlash then
-                    env.setTextColor(colors.white)
-                    env.setBackgroundColor(colors.black)
-                else
-                    env.setTextColor(colors.white)
-                    env.setBackgroundColor(colors.red)
-                end
-                env.setCursorPos(1,1)
-                env.clearLine()
-                term.redirect(env)
-                cWrite("!! ===>> ALARM <<=== !!")
-                term.redirect(gui.rootTerminal)
+            if systemMonitor.vars.warnFlash then
+                env.setTextColor(colors.white)
                 env.setBackgroundColor(colors.black)
+            else
+                env.setTextColor(colors.white)
+                env.setBackgroundColor(colors.red)
             end
-            env.setCursorPos(2,5)
+            env.setCursorPos(1,1)
+            env.clearLine()
+            term.redirect(env)
+            cWrite("!! ===>> ALARM <<=== !!")
+            term.redirect(gui.rootTerminal)
+            env.setBackgroundColor(colors.black)
+        end
+        env.setCursorPos(2,5)
+        env.setTextColor(colors.white)
+        --env.write("Temp: "..math.floor(temp).."K")
+        if systemMonitor.vars.isTempCritical and systemMonitor.vars.warnFlash then
+            env.setTextColor(colors.red)
+            barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.red,colors.gray,env)
+        else
             env.setTextColor(colors.white)
-            --env.write("Temp: "..math.floor(temp).."K")
-            if systemMonitor.vars.isTempCritical and systemMonitor.vars.warnFlash then
-                env.setTextColor(colors.red)
-                barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.red,colors.gray,env)
+            barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.lightBlue,colors.gray,env)
+        end
+        if systemMonitor.vars.isNoCoolant and systemMonitor.vars.warnFlash then
+            env.setTextColor(colors.red)
+            barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.red,colors.gray,env)
+        else
+            env.setTextColor(colors.white)
+            barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.lightBlue,colors.gray,env)
+        end
+        if systemMonitor.vars.isSteamFull and systemMonitor.vars.warnFlash then
+            env.setTextColor(colors.red)
+            barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.red,colors.gray,env)
+        else
+            env.setTextColor(colors.white)
+            barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.lightBlue,colors.gray,env)
+        end
+        if systemMonitor.vars.isDamaged and systemMonitor.vars.warnFlash then
+            env.setTextColor(colors.red)
+            barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.red,colors.gray,env)
+        else
+            env.setTextColor(colors.white)
+            barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.lightBlue,colors.gray,env)
+        end
+        if systemMonitor.vars.isNoFuel and systemMonitor.vars.warnFlash then
+            env.setTextColor(colors.red)
+            barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.red,colors.gray,env)
+        else
+            env.setTextColor(colors.white)
+            barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.lightBlue,colors.gray,env)
+        end
+        if systemMonitor.vars.isWasteFull and systemMonitor.vars.warnFlash then
+            env.setTextColor(colors.red)
+            barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.red,colors.gray,env)
             else
-                env.setTextColor(colors.white)
-                barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.lightBlue,colors.gray,env)
-            end
-            if systemMonitor.vars.isNoCoolant and systemMonitor.vars.warnFlash then
-                env.setTextColor(colors.red)
-                barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.red,colors.gray,env)
-            else
-                env.setTextColor(colors.white)
-                barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.lightBlue,colors.gray,env)
-            end
-            if systemMonitor.vars.isSteamFull and systemMonitor.vars.warnFlash then
-                env.setTextColor(colors.red)
-                barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.red,colors.gray,env)
-            else
-                env.setTextColor(colors.white)
-                barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.lightBlue,colors.gray,env)
-            end
-            if systemMonitor.vars.isDamaged and systemMonitor.vars.warnFlash then
-                env.setTextColor(colors.red)
-                barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.red,colors.gray,env)
-            else
-                env.setTextColor(colors.white)
-                barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.lightBlue,colors.gray,env)
-            end
-            if systemMonitor.vars.isNoFuel and systemMonitor.vars.warnFlash then
-                env.setTextColor(colors.red)
-                barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.red,colors.gray,env)
-            else
-                env.setTextColor(colors.white)
-                barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.lightBlue,colors.gray,env)
-            end
-            if systemMonitor.vars.isWasteFull and systemMonitor.vars.warnFlash then
-                env.setTextColor(colors.red)
-                barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.red,colors.gray,env)
-             else
-                env.setTextColor(colors.white)
-                barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.lightBlue,colors.gray,env)
-            end
-            --[[local radiation = systemMonitor.getRad()
-            env.setCursorPos(2,h)
-            if radiation[1] then
-                env.setTextColor(colors.red)
-            else
-                env.setTextColor(colors.green)
-            end
-            env.write("Radiation: "..(radiation[2]))]]
+            env.setTextColor(colors.white)
+            barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.lightBlue,colors.gray,env)
+        end
+        --[[local radiation = systemMonitor.getRad()
+        env.setCursorPos(2,h)
+        if radiation[1] then
+            env.setTextColor(colors.red)
+        else
+            env.setTextColor(colors.green)
+        end
+        env.write("Radiation: "..(radiation[2]))]]
 
-            if systemMonitor.alarms.master and not systemMonitor.alarms.masterAlarmed then
+        if systemMonitor.alarms.master and not systemMonitor.alarms.masterAlarmed then
+            for i=1, #gui.menus.main do
+                if gui.menus.main[i].name == "Activate" then
+                    gui.menus.main[i].enabled = false
+                elseif gui.menus.main[i].name == "Scram" then
+                    gui.menus.main[i].enabled = false
+                elseif gui.menus.main[i].name == "Reset" then
+                    gui.menus.main[i].enabled = true
+                end
+            end
+        elseif not systemMonitor.alarms.masterAlarmed then
+            if systemMonitor.vars.isActive and not status then
+                for i=1, #gui.menus.main do
+                    if gui.menus.main[i].name == "Activate" then
+                        gui.menus.main[i].enabled = true
+                    elseif gui.menus.main[i].name == "Scram" then
+                        gui.menus.main[i].enabled = false
+                    end
+                end
+                os.queueEvent("system_interrupt")
+                vox.queue(vox_sequences.reactorDeactivated)
+                systemMonitor.vars.isActive = false
+            elseif not systemMonitor.vars.isActive and status then
                 for i=1, #gui.menus.main do
                     if gui.menus.main[i].name == "Activate" then
                         gui.menus.main[i].enabled = false
                     elseif gui.menus.main[i].name == "Scram" then
-                        gui.menus.main[i].enabled = false
-                    elseif gui.menus.main[i].name == "Reset" then
                         gui.menus.main[i].enabled = true
+                        --gui.item = i
                     end
                 end
-            elseif not systemMonitor.alarms.masterAlarmed then
-                if systemMonitor.vars.isActive and not status then
-                    for i=1, #gui.menus.main do
-                        if gui.menus.main[i].name == "Activate" then
-                            gui.menus.main[i].enabled = true
-                        elseif gui.menus.main[i].name == "Scram" then
-                            gui.menus.main[i].enabled = false
-                        end
-                    end
-                    os.queueEvent("system_interrupt")
-                    vox.queue(vox_sequences.reactorDeactivated)
-                    systemMonitor.vars.isActive = false
-                elseif not systemMonitor.vars.isActive and status then
-                    for i=1, #gui.menus.main do
-                        if gui.menus.main[i].name == "Activate" then
-                            gui.menus.main[i].enabled = false
-                        elseif gui.menus.main[i].name == "Scram" then
-                            gui.menus.main[i].enabled = true
-                            --gui.item = i
-                        end
-                    end
-                    os.queueEvent("system_interrupt")
-                    vox.queue(vox_sequences.reactorActivated)
-                    systemMonitor.vars.isActive = true
-                end
+                os.queueEvent("system_interrupt")
+                vox.queue(vox_sequences.reactorActivated)
+                systemMonitor.vars.isActive = true
             end
-            if not systemMonitor.alarms.master then
-                if systemMonitor.vars.isNoFuel and fuel > 0 then
-                    systemMonitor.vars.isNoFuel = false
-                elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
-                    systemMonitor.vars.isNoFuel = true
-                    vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
-                end
-
-                if systemMonitor.vars.isNoCoolant and coolant > 0 then
-                    systemMonitor.vars.isNoCoolant = false
-                elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
-                    systemMonitor.vars.isNoCoolant = true
-                    vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
-                end
-
-                if systemMonitor.vars.isSteamFull and steam < steam_cap-500 then
-                    systemMonitor.vars.isSteamFull = false
-                elseif steam >= steam_cap-500 and (status or systemMonitor.vars.forceCheck) then
-                    systemMonitor.vars.isSteamFull = true
-                    vox.queue(vox_sequences.overflowSteam) dev.pos(11,1) dev.write('VOX overflowSteam')
-                end
-
-                if systemMonitor.vars.isWasteFull and waste < waste_cap-500 then
-                    systemMonitor.vars.isWasteFull = false
-                elseif waste >= waste_cap-500 and (status or systemMonitor.vars.forceCheck) then
-                    systemMonitor.vars.isWasteFull = true
-                    vox.queue(vox_sequences.overflowWaste) dev.pos(11,1) dev.write('VOX overflowWaste')
-                end
-
-                if systemMonitor.vars.isTempCritical and temp < 1000 then
-                    systemMonitor.vars.isTempCritical = false
-                elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
-                    systemMonitor.vars.isTempCritical = true
-                    vox.queue(vox_sequences.highTemp) dev.pos(11,1) dev.write('VOX highTemp')
-                end
+        end
+        if not systemMonitor.alarms.master then
+            if systemMonitor.vars.isNoFuel and fuel > 0 then
+                systemMonitor.vars.isNoFuel = false
+            elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isNoFuel = true
+                vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
             end
 
-            if waste == waste_cap then
-                systemMonitor.alarms.radiation = true
-            end
-            if systemMonitor.alarms.radiation and systemMonitor.alarms.radiation_CoolDown == 0 then
-                intercom.playSound("aci.vox.voice_legacy.bizwarn")
-                systemMonitor.alarms.radiation_CoolDown = 5
-            elseif systemMonitor.alarms.radiation_CoolDown > 0 then
-                systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
+            if systemMonitor.vars.isNoCoolant and coolant > 0 then
+                systemMonitor.vars.isNoCoolant = false
+            elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isNoCoolant = true
+                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
-            if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
-                equipment.reactor.scram()
+            if systemMonitor.vars.isSteamFull and steam < steam_cap-500 then
+                systemMonitor.vars.isSteamFull = false
+            elseif steam >= steam_cap-500 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isSteamFull = true
+                vox.queue(vox_sequences.overflowSteam) dev.pos(11,1) dev.write('VOX overflowSteam')
             end
-            if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
-                systemMonitor.alarms.master = true
+
+            if systemMonitor.vars.isWasteFull and waste < waste_cap-500 then
+                systemMonitor.vars.isWasteFull = false
+            elseif waste >= waste_cap-500 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isWasteFull = true
+                vox.queue(vox_sequences.overflowWaste) dev.pos(11,1) dev.write('VOX overflowWaste')
             end
+
+            if systemMonitor.vars.isTempCritical and temp < 1000 then
+                systemMonitor.vars.isTempCritical = false
+            elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isTempCritical = true
+                vox.queue(vox_sequences.highTemp) dev.pos(11,1) dev.write('VOX highTemp')
+            end
+        end
+
+        if waste == waste_cap then
+            systemMonitor.alarms.radiation = true
+        end
+        if systemMonitor.alarms.radiation and systemMonitor.alarms.radiation_CoolDown == 0 then
+            intercom.playSound("aci.vox.voice_legacy.bizwarn")
+            systemMonitor.alarms.radiation_CoolDown = 5
+        elseif systemMonitor.alarms.radiation_CoolDown > 0 then
+            systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
+        end
+
+        if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
+            equipment.reactor.scram()
+        end
+        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
+            systemMonitor.alarms.master = true
+        end
 --  600 K moderate
 -- 1000 K high
 -- 1200 K critical
-            systemMonitor.vars.warnFlash = not systemMonitor.vars.warnFlash
-            if systemMonitor.vars.forceCheck then systemMonitor.vars.forceCheck = false end
-            sleep(0.75)
-        end
+        systemMonitor.vars.warnFlash = not systemMonitor.vars.warnFlash
+        if systemMonitor.vars.forceCheck then systemMonitor.vars.forceCheck = false end
+        sleep(0.75)
+
     end,
 }
 
