@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 6,
+        build = 7,
     },
 	files = 
 	{
@@ -442,7 +442,7 @@ systemMonitor = {
     environments = {
         monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos)),
         menu = false,
-    }
+    },
     draw_monitor = function()
         local env = systemMonitor.environments.monitor
         sleep(1) os.queueEvent("system_interrupt")
