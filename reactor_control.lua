@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a2',
 	    date = 'August 14, 2021',
-        build = 10,
+        build = 11,
     },
 	files = 
 	{
@@ -445,6 +445,8 @@ systemMonitor = {
             systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
 
             systemMonitor.data.damage = equipment.reactor.getDamagePercent()
+
+            systemMonitor.environments.monitor.write("DEBUG: Monitor is running...")
 
             os.queueEvent("r.system_screen")
             sleep(0.05)
