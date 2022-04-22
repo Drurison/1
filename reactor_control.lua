@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.0.4',
 	    date = 'April 22, 2022',
-        build = 2,
+        build = 3,
     },
     devs = {"Peekofwar"},
 	files = 
@@ -656,7 +656,7 @@ listen = {
 }
 
 equipment = {
-    reactor = peripheral.find("fissionReactorLogicAdapter"),
+    reactor = peripheral.find("fissionReactor"),
     radiationSensors = {},
     findSensors = function()
         local attached = peripheral.getNames()
@@ -724,7 +724,7 @@ startup = {
         if equipment.reactor then
             print("Found: "..peripheral.getName(equipment.reactor))
         else
-            error("Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.",0)
+            error("Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n\nNOTE: Reactor API has changed. If you've recently updated Advanced Peripherals, please wait for a program update.",0)
         end
         if equipment.radiationSensors then
             print("Found: "..#equipment.radiationSensors.." radiation sensors")
