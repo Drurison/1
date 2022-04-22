@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 19,
+        build = 20,
     },
 	files = 
 	{
@@ -457,7 +457,7 @@ systemMonitor = {
                 systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
 
                 systemMonitor.data.damage = equipment.reactor.getDamagePercent()
-            )
+            end)
             --error("Program under heavy rewrite...",0)
 
             os.queueEvent("r.system_screen")
