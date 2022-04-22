@@ -4,9 +4,9 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.1.0a2',
-	    date = 'August 14, 2021',
-        build = 15,
+        string = '1.1.0a3',
+	    date = 'April 22, 2022',
+        build = 16,
     },
 	files = 
 	{
@@ -28,6 +28,7 @@ progInfo.help = {
             {colors.lightBlue,"Switches:"},
             " /dev   - Activates dev functions",
             " /debug - Triggers debugging keybinds",
+            " /verbose - Triggers additional debug messages",
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
             "",
@@ -228,13 +229,16 @@ gui = {
                 monitorPos = {11,1,w-10,h},
             },
         },
+        setup = function()
+            gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
+            gui.basic.draw(env)
+        end,
         run = function()
             term.clear()
 
-            local env = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
-            gui.basic.draw(env)
+            local env = gui.windows.menu
 
-            while true do
+            --while true do
                 local event = table.pack(os.pullEvent())
                 if event[1] == "key" then key_raw = event[2] end
                 if key_raw then
@@ -269,7 +273,7 @@ gui = {
                         if event[1] == "mouse_up" then term.setCursorPos(event[3],event[4]) printError("X") end
                     end
                 end
-            end
+            --end
         end,
         draw = function(env)
             env.setCursorPos(1,1)
@@ -452,7 +456,7 @@ systemMonitor = {
 
             systemMonitor.data.damage = equipment.reactor.getDamagePercent()
 
-            error("Program under heavy rewrite...",0)
+            --error("Program under heavy rewrite...",0)
 
             os.queueEvent("r.system_screen")
             sleep(0.05)
@@ -462,9 +466,9 @@ systemMonitor = {
         while true do
             local event = {os.pullEvent()}
             if event == "r.system_screen" then
-                --draw screen here
+                systemMonitor.draw_monitor()
             elseif event == "key" then
-                --handle key stuff here
+                gui.run()
             end
         end
     end,
