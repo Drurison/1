@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 18,
+        build = 19,
     },
 	files = 
 	{
@@ -434,29 +434,30 @@ systemMonitor = {
                 cWrite("Check reactor status immediately.")
                 sleep(0.25)
                 term.redirect(gui.rootTerminal)
-                error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
+                --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
-            systemMonitor.data.status = equipment.reactor.getStatus()
+            pcall(function()
+                systemMonitor.data.status = equipment.reactor.getStatus()
 
-            systemMonitor.data.fuel = equipment.reactor.getFuel()
-            systemMonitor.data.fuel_cap = equipment.reactor.getFuelCapacity()
-            systemMonitor.data.fuel_percent = systemMonitor.data.fuel/systemMonitor.data.fuel_cap
-            systemMonitor.data.waste = equipment.reactor.getWaste()
-            systemMonitor.data.waste_cap = equipment.reactor.getWasteCapacity()
-            systemMonitor.data.waste_percent = systemMonitor.data.waste/systemMonitor.data.waste_cap
+                systemMonitor.data.fuel = equipment.reactor.getFuel()
+                systemMonitor.data.fuel_cap = equipment.reactor.getFuelCapacity()
+                systemMonitor.data.fuel_percent = systemMonitor.data.fuel/systemMonitor.data.fuel_cap
+                systemMonitor.data.waste = equipment.reactor.getWaste()
+                systemMonitor.data.waste_cap = equipment.reactor.getWasteCapacity()
+                systemMonitor.data.waste_percent = systemMonitor.data.waste/systemMonitor.data.waste_cap
 
-            systemMonitor.data.coolant = equipment.reactor.getCoolant()
-            systemMonitor.data.coolant = systemMonitor.data.coolant.amount
-            systemMonitor.data.coolant_cap = equipment.reactor.getCoolantCapacity()
-            systemMonitor.data.coolant_percent = systemMonitor.data.coolant/systemMonitor.data.coolant_cap
-            systemMonitor.data.steam = equipment.reactor.getHeatedCoolant()
-            systemMonitor.data.steam = systemMonitor.data.steam.amount
-            systemMonitor.data.steam_cap = equipment.reactor.getHeatedCoolantCapacity()
-            systemMonitor.data.steam_percent = systemMonitor.data.steam/systemMonitor.data.steam_cap
-            systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
+                systemMonitor.data.coolant = equipment.reactor.getCoolant()
+                systemMonitor.data.coolant = systemMonitor.data.coolant.amount
+                systemMonitor.data.coolant_cap = equipment.reactor.getCoolantCapacity()
+                systemMonitor.data.coolant_percent = systemMonitor.data.coolant/systemMonitor.data.coolant_cap
+                systemMonitor.data.steam = equipment.reactor.getHeatedCoolant()
+                systemMonitor.data.steam = systemMonitor.data.steam.amount
+                systemMonitor.data.steam_cap = equipment.reactor.getHeatedCoolantCapacity()
+                systemMonitor.data.steam_percent = systemMonitor.data.steam/systemMonitor.data.steam_cap
+                systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
 
-            systemMonitor.data.damage = equipment.reactor.getDamagePercent()
-
+                systemMonitor.data.damage = equipment.reactor.getDamagePercent()
+            )
             --error("Program under heavy rewrite...",0)
 
             os.queueEvent("r.system_screen")
