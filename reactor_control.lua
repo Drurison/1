@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 16,
+        build = 17,
     },
 	files = 
 	{
@@ -413,6 +413,7 @@ systemMonitor = {
     },
     thread_main = function()
         if args.voxTest then return end
+        os.queueEvent("r.system_screen")
         while true do
             while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
                 systemMonitor.alarms.master = true
