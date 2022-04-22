@@ -724,7 +724,7 @@ startup = {
         if equipment.reactor then
             print("Found: "..peripheral.getName(equipment.reactor))
         else
-            error("Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n\nNOTE: Reactor API has changed. If you've recently updated Advanced Peripherals, please wait for a program update.",0)
+            error("Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n\nNOTE: Reactor API has changed. If you've recently updated Advanced Peripherals, please wait for a program update.\n",0)
         end
         if equipment.radiationSensors then
             print("Found: "..#equipment.radiationSensors.." radiation sensors")
