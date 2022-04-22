@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 17,
+        build = 18,
     },
 	files = 
 	{
@@ -434,7 +434,7 @@ systemMonitor = {
                 cWrite("Check reactor status immediately.")
                 sleep(0.25)
                 term.redirect(gui.rootTerminal)
-                --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
+                error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
             systemMonitor.data.status = equipment.reactor.getStatus()
 
