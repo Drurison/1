@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 43,
+        build = 44,
     },
 	files = 
 	{
@@ -729,6 +729,12 @@ listen = {
 equipment = {
     reactor = peripheral.find("fissionReactor"),
     radiationSensors = {},
+    findReactor = function()
+        local ap = peripheral.find("fissionReactor")
+        local mk = peripheral.find("fissionReactorLogicAdapter")
+        equipment.reactor = peripheral.wrap(ap or mk)
+        return (ap or mk) and true or false, ap and "legacy" or mk and "mek" or "none"
+    end,
     findSensors = function()
         local attached = peripheral.getNames()
         for i=1, #attached do
@@ -785,17 +791,22 @@ vox = {
 	end,
 }
 
-local __termOrig = term.current()
 startup = {
     
     start = function()
         term.setCursorBlink(true)
         print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
         sleep(1)
+        local pass,result = equipment.findReactor()
         if equipment.reactor then
             print("Found: "..peripheral.getName(equipment.reactor))
+            if result == "mek" then
+                crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.")
+                equipment.reactor.scram()
+                error(nil,0)
+            end
         else
-            error("Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.",0)
+            error("Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n",0)
         end
         if equipment.radiationSensors then
             print("Found: "..#equipment.radiationSensors.." radiation sensors")
@@ -815,7 +826,7 @@ startup = {
             equipment.reactor.scram()
             printError("\nREACTOR IS ACTIVE; SCRAMMING...")
             sleep(1)
-            quit()
+            --quit()
         end
     end,
     run = function()
@@ -826,6 +837,7 @@ startup = {
         parallel.waitForAll(listen.fallbackTerminate,systemMonitor.thread_main,systemMonitor.thread_input)
     end,
 }
+local __termOrig = term.current()
 crashScreen = function(...)
     term.redirect(__termOrig)
     local pass, err = ...
