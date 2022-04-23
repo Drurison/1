@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 77,
+        build = 78,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -386,7 +386,7 @@ gui = {
                 run = function()
                     if equipment.reactor.getStatus() then
                         printError('REACTOR IS ACTIVE; SCRAMMING...')
-                        pcall(vox.queue(vox_sequences.reactorDeactivated))
+                        pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
                         equipment.reactor.scram()
                     end
                     dev.write("Rainbow Dash is best pegasus!") dev.sleep(0.25)
@@ -915,7 +915,7 @@ startup = {
         if equipment.reactor and equipment.reactor.getStatus() then
             equipment.reactor.scram()
             printError("REACTOR IS ACTIVE; SCRAMMING...")
-            pcall(vox.queue(vox_sequences.reactorDeactivated))
+            pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
             sleep(1)
         end
         print("Starting GUI...")
@@ -927,7 +927,7 @@ startup = {
         if equipment.reactor and equipment.reactor.getStatus() then
             equipment.reactor.scram()
             printError("\nREACTOR IS ACTIVE; SCRAMMING...")
-            pcall(vox.queue(vox_sequences.reactorDeactivated))
+            pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
             sleep(1)
             --quit()
         end
