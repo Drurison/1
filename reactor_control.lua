@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 59
+        build = 60
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -38,6 +38,7 @@ progInfo.help = {
             " + Added alarm state for reactor damage.",
             " * Rewrote/rearranged core code to mitigate input",
             "   lag.",
+            " * Updated VOX system to use a remote VOX system.",
             {colors.lightBlue,"Changelong v1.0.3:"},
             " * Changed reactor type string for Advanced",
             "   Peripherals 0.7r (peripheral proxy was removed)",
@@ -112,7 +113,8 @@ do
             default_voice = "voice_legacy",
             modem_channel = 39934,
         },
-        reactor_ID = nil
+        reactor_ID = nil,
+        startup_scramActive,
         alarm_coolantMin = 10000,
         alarm_integrityMin = 100,
     }
@@ -852,28 +854,38 @@ intercom = {
 }
 intercom.findAll()
 vox = {
-	playlist = {},
-	queue = function(list)
-		--dev.print('Queueing playlist with '..#list..' items')
-		table.insert(vox.playlist,list)
-        os.queueEvent('vox_run')
-	end,
-	run = function()
-		while true do
-            os.pullEvent('vox_run')
-			local playlist = vox.playlist[1]
-			if type(vox.playlist[1]) == "table" then
-				--dev.print('Playing playlist with '..#playlist..' sounds...')
-				for i=1, #playlist do
-					--de.print('vox', playlist[i].sound)
-					intercom.playSound(playlist[i].sound,1,1)
-					sleep(playlist[i].length)
-				end
-				table.remove(vox.playlist,1)
-                os.queueEvent('vox_run')
-			end
-		end
-	end,
+    generate_message = function(input_string,voice_name,seperator)
+        local word_table={}
+        for str in string.gmatch(input_string, "([^"..(seperator or " ").."]+)") do
+                table.insert(word_table, str)
+        end
+
+        --if type(t) ~= "table" then error("expected table, got '"..type(input).."' instead") end
+
+        local message = {}
+        
+        for i=1, #word_table do
+            message[i] = {}
+            local word = word_table[i]
+            local trailChar = string.sub(word,#word,#word)
+            if trailChar == "." or trailChar == "!" or trailChar == "?" then
+                message[i].pause = "1"
+                word = string.sub(word,1,#word-1)
+            elseif trailChar == "," or trailChar == ";" or trailChar == ":" then
+                message[i].pause = "0.25"
+                word = string.sub(word,1,#word-1)
+            end
+            message[i].word = word
+        end
+        --return message
+        local request = { message = "VOX_REQUEST", }
+        request.playlist = message
+        if voice_name and #voice_name>0 then request.voice = voice_name end
+        return request
+    end,
+    send_message = function(vox_message)
+
+    end,
 }
 
 startup = {
