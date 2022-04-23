@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 23,
+        build = 24,
     },
 	files = 
 	{
@@ -204,15 +204,6 @@ gui = {
         local x,y = env.getCursorPos()
         return env.setCursorPos(1,y+1)
     end,
-    
-    run = function()
-        sleep(0.25) --if not listen.isKeyActive then error("Key listener not active!",0) end
-
-        gui.basic.run()
-
-        error("'gui.run()' stopped!")
-    end,
-
     basic = {
         config = {
             colors = {
@@ -229,48 +220,6 @@ gui = {
                 monitorPos = {11,1,w-10,h},
             },
         },
-        run = function()
-            term.clear()
-
-            local env = gui.windows.menu
-
-            --while true do
-                local event = table.pack(os.pullEvent())
-                if event[1] == "key" then key_raw = event[2] end
-                if key_raw then
-                    if key_raw == keys.f9 and args.debug then error("Error screen test message") end
-                    if key_raw == keys.down then
-                        if gui.item+1 > #gui.menus.main then
-                            gui.item = 1
-                        else
-                            gui.item = gui.item + 1
-                        end
-                    elseif key_raw == keys.up then
-                        if gui.item-1 < 1 then
-                            gui.item = #gui.menus.main
-                        else
-                            gui.item = gui.item - 1
-                        end
-                    elseif (key_raw == keys.enter or key_raw == keys.numPadEnter) and gui.menus.main[gui.item].enabled then
-                        gui.menus.main[gui.item].run()
-                    end
-                end
-                gui.basic.draw(env)
-
-                sleep(0.1)
-                key_raw = nil
-                
-                if args.dev then 
-                    term.setCursorPos(1,h)
-                    term.clearLine() for i=1, #event do dev.write(tostring(event[i])..',') end
-                    if args.dev then
-                        if event[1] == "mouse_click" then term.setCursorPos(event[3],event[4]) printError("X") end
-                        if event[1] == "mouse_drag" then term.setCursorPos(event[3],event[4]) printError("X") end
-                        if event[1] == "mouse_up" then term.setCursorPos(event[3],event[4]) printError("X") end
-                    end
-                end
-            --end
-        end,
         draw = function(env)
             env.setCursorPos(1,1)
             env.setBackgroundColor(colors.gray)
@@ -461,11 +410,46 @@ systemMonitor = {
         end
     end,
     thread_input = function()
+        gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
         while true do
             local event = os.pullEvent()
             if event == "r.system_screen" then
                 systemMonitor.draw_monitor()
             elseif event == "key" then
+                    local event = table.pack(os.pullEvent())
+                    if event[1] == "key" then key_raw = event[2] end
+                    if key_raw then
+                        if key_raw == keys.f9 and args.debug then error("Error screen test message") end
+                        if key_raw == keys.down then
+                            if gui.item+1 > #gui.menus.main then
+                                gui.item = 1
+                            else
+                                gui.item = gui.item + 1
+                            end
+                        elseif key_raw == keys.up then
+                            if gui.item-1 < 1 then
+                                gui.item = #gui.menus.main
+                            else
+                                gui.item = gui.item - 1
+                            end
+                        elseif (key_raw == keys.enter or key_raw == keys.numPadEnter) and gui.menus.main[gui.item].enabled then
+                            gui.menus.main[gui.item].run()
+                        end
+                    end
+                    gui.basic.draw(env)
+
+                    sleep(0.1)
+                    key_raw = nil
+                    
+                    if args.dev then 
+                        term.setCursorPos(1,h)
+                        term.clearLine() for i=1, #event do dev.write(tostring(event[i])..',') end
+                        if args.dev then
+                            if event[1] == "mouse_click" then term.setCursorPos(event[3],event[4]) printError("X") end
+                            if event[1] == "mouse_drag" then term.setCursorPos(event[3],event[4]) printError("X") end
+                            if event[1] == "mouse_up" then term.setCursorPos(event[3],event[4]) printError("X") end
+                        end
+                    end
                 gui.run()
             end
         end
