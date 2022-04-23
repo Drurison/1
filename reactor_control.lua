@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 22,
+        build = 23,
     },
 	files = 
 	{
@@ -206,7 +206,6 @@ gui = {
     end,
     
     run = function()
-        print("HELLO WORLD!")
         sleep(0.25) --if not listen.isKeyActive then error("Key listener not active!",0) end
 
         gui.basic.run()
