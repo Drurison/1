@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a4',
 	    date = 'April 23, 2022',
-        build = 53
+        build = 54
     },
 	files = 
 	{
@@ -551,10 +551,10 @@ systemMonitor = {
             systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
         end
 
-        if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
+        if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn) then
             equipment.reactor.scram()
         end
-        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
+        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn) then
             systemMonitor.alarms.master = true
         end
 --  600 K moderate
