@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 47,
+        build = 48,
     },
 	files = 
 	{
@@ -361,7 +361,7 @@ systemMonitor = {
         if args.voxTest then return end
         os.queueEvent("r.system_screen")
         while true do
-            while not peripheral.isPresent(peripheral.getName(equipment.reactor)) or systemMonitor.alarms.master do
+            while not peripheral.isPresent(peripheral.getName(equipment.reactor)) or systemMonitor.alarms.disconnected do
                 if not systemMonitor.alarms.disconnected then
                     for i=1, #gui.menus.main do
                         if gui.menus.main[i].name == "Activate" then
