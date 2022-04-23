@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 61
+        build = 63
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -199,7 +199,7 @@ args = {
             if string.lower(args.commandLine[i]) == "/test" then args.test = true end
             if string.lower(args.commandLine[i]) == "/verbose" then args.verbose = true end
             if string.lower(args.commandLine[i]) == "--verbose" then args.verbose = true end
-            dev.verbose(i, type(args.commandLine[i]), args.commandLine[i])
+            --dev.verbose(i, type(args.commandLine[i]), args.commandLine[i])
         end
         --sleep(1)
     end,
