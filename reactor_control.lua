@@ -4,12 +4,11 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.1.0a4',
+        string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 57
+        build = 58
     },
-	files = 
-	{
+	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
 		os_settings = '/.settings',
 	},
@@ -105,7 +104,67 @@ progInfo.help = {
         error()
     end,
 }
-
+------ Program User Config
+local program_settings, save_settings, load_settings
+do
+    local program_settings_default = {
+        vox = {
+            default_voice = "voice_legacy",
+            modem_channel = 39934,
+        },
+        alarm_coolantMin = 10000,
+        alarm_integrityMin = 100,
+    }
+    local function deepCopy(tab)
+        --printError("-Function start")
+        local a = {}
+        for k, v in pairs(tab) do
+            if type(v) == "table" then
+                --print("Key: "..k.." = ".."( table )")
+                a[k]=deepCopy(v)
+            else
+                --print("Key: "..k.." = "..tostring(v))
+                a[k]=v
+            end
+        end
+        --printError("--Function return")
+        return a
+    end
+    local function verify(target,reference)
+        if type(target) ~= "table" then return error("argument #1: expected table, got '"..type(target).."' instead!") end
+        if type(reference) ~= "table" then return error("argument #2: expected reference table, got '"..type(reference).."' instead!") end
+        local return_boolean = false
+        for key,value in pairs(reference) do
+            if target[key] == nil then
+                printError("Key: "..key.." missing! Default: "..tostring(value))
+                target[key] = reference[key]
+                return_boolean = true
+            elseif type(target[key]) == "table" then
+                return_boolean = verify(target[key],reference[key]) or return_boolean
+            end
+        end
+        return return_boolean
+    end
+    function save_settings()
+        print("Writing local config file...")
+        local file = fs.open(program_info.files.config,"w")
+        file.write(textutils.serialise(program_settings_default))
+        file.close()
+    end
+    function load_settings(forceDefault)
+        if fs.exists(program_info.files.config) and not forceDefault then
+            local file = fs.open(program_info.files.config,"r")
+            program_settings = textutils.unserialise(file.readAll())
+            file.close()
+            local err = verify(program_settings,program_settings_default)
+            if err then printError("Config file is incomplete") save_settings() end
+        else
+            program_settings = deepCopy(program_settings_default)
+            save_settings()
+        end
+    end
+end
+------
 function math.clamp(vMin,vMax,x)
 	return math.max(math.min(x,vMax),vMin)
 end
@@ -127,13 +186,17 @@ args = {
     commandLine = {...},
     scanCommandLine = function()
         for i=1, #args.commandLine do
-            --print(i, type(args.commandLine[i]), args.commandLine[i])
             if string.lower(args.commandLine[i]) == "/dev" then args.dev = true end
             if string.lower(args.commandLine[i]) == "/debug" then args.debug = true end
             if string.lower(args.commandLine[i]) == "/help" then args.help = true end
             if string.lower(args.commandLine[i]) == "/?" then args.help = true end
+            if string.lower(args.commandLine[i]) == "--help" then args.help = true end
+            if string.lower(args.commandLine[i]) == "-h" then args.help = true end
             if string.lower(args.commandLine[i]) == "/voxtest" then args.voxTest = true end
             if string.lower(args.commandLine[i]) == "/test" then args.test = true end
+            if string.lower(args.commandLine[i]) == "/verbose" then args.verbose = true end
+            if string.lower(args.commandLine[i]) == "--verbose" then args.verbose = true end
+            dev.verbose(i, type(args.commandLine[i]), args.commandLine[i])
         end
         --sleep(1)
     end,
@@ -143,6 +206,11 @@ if args.help then progInfo.help.display() end
 dev = {
     print = function(...)
         if args.dev then
+            print(...)
+        end
+    end,
+    verbose = function(...)
+        if args.verbose then
             print(...)
         end
     end,
@@ -559,9 +627,9 @@ systemMonitor = {
         if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn) then
             systemMonitor.alarms.master = true
         end
---  600 K moderate
--- 1000 K high
--- 1200 K critical
+        --  600 K moderate
+        -- 1000 K high
+        -- 1200 K critical
         if systemMonitor.vars.forceCheck then systemMonitor.vars.forceCheck = false end
         --sleep(0.75)
         end
