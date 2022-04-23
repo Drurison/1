@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 28,
+        build = 29,
     },
 	files = 
 	{
@@ -435,7 +435,7 @@ systemMonitor = {
                 end
                 gui.basic.draw(gui.windows.menu)
 
-                sleep(0.1)
+                --sleep(0.1)
                 key_raw = nil
                 
             
@@ -459,7 +459,7 @@ systemMonitor = {
     },
     draw_monitor = function()
         local env = systemMonitor.environments.monitor
-        sleep(1) os.queueEvent("system_interrupt")
+        --sleep(1) os.queueEvent("system_interrupt")
         local w,h = env.getSize()
         local disconnect_warn_state = false
 
@@ -586,7 +586,7 @@ systemMonitor = {
                         gui.menus.main[i].enabled = false
                     end
                 end
-                os.queueEvent("system_interrupt")
+                --os.queueEvent("system_interrupt")
                 vox.queue(vox_sequences.reactorDeactivated)
                 systemMonitor.vars.isActive = false
             elseif not systemMonitor.vars.isActive and status then
@@ -598,7 +598,7 @@ systemMonitor = {
                         --gui.item = i
                     end
                 end
-                os.queueEvent("system_interrupt")
+                --os.queueEvent("system_interrupt")
                 vox.queue(vox_sequences.reactorActivated)
                 systemMonitor.vars.isActive = true
             end
