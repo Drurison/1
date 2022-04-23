@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a4',
 	    date = 'April 23, 2022',
-        build = 55
+        build = 56
     },
 	files = 
 	{
@@ -609,10 +609,10 @@ systemMonitor = {
         end
     end,
     thread_monitor = function()
-        if args.voxTest then return end
         gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
         gui.windows.monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos))
         gui.basic.draw(gui.windows.menu)
+        if args.voxTest then return end
         while true do
             sleep(0.75)
             if not systemMonitor.alarms.disconnected then
