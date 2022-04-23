@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 39,
+        build = 40,
     },
 	files = 
 	{
@@ -297,6 +297,7 @@ gui = {
                     end
                     systemMonitor.alarms.master = false
                     systemMonitor.alarms.masterAlarmed = false
+                    systemMonitor.alarms.disconnected = false
                     systemMonitor.vars.forceCheck = true
                 end,
             },
@@ -361,6 +362,17 @@ systemMonitor = {
         os.queueEvent("r.system_screen")
         while true do
             while not peripheral.isPresent(peripheral.getName(equipment.reactor)) or systemMonitor.alarms.master do
+                if not systemMonitor.alarms.disconnected then
+                    for i=1, #gui.menus.main do
+                        if gui.menus.main[i].name == "Activate" then
+                            gui.menus.main[i].enabled = false
+                        elseif gui.menus.main[i].name == "Scram" then
+                            gui.menus.main[i].enabled = false
+                        elseif gui.menus.main[i].name == "Reset" then
+                            gui.menus.main[i].enabled = true
+                        end
+                    end
+                end
                 systemMonitor.alarms.master = true
                 systemMonitor.alarms.disconnected = true
                 term.redirect(gui.windows.monitor)
@@ -450,16 +462,6 @@ systemMonitor = {
                     gui.menus.main[i].enabled = true
                 end
             end 
-        elseif systemMonitor.alarms.disconnected and not systemMonitor.alarms.masterAlarmed then
-            for i=1, #gui.menus.main do
-                if gui.menus.main[i].name == "Activate" then
-                    gui.menus.main[i].enabled = false
-                elseif gui.menus.main[i].name == "Scram" then
-                    gui.menus.main[i].enabled = false
-                elseif gui.menus.main[i].name == "Reset" then
-                    gui.menus.main[i].enabled = true
-                end
-            end
         elseif not systemMonitor.alarms.masterAlarmed then
             if systemMonitor.vars.isActive and not status then
                 for i=1, #gui.menus.main do
