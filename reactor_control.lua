@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 25,
+        build = 26,
     },
 	files = 
 	{
@@ -221,8 +221,7 @@ gui = {
             },
         },
         draw = function(env)
-            print("HELLO WORLD")
-            sleep(1)
+            error("HELLO WORLD")
             env.setCursorPos(1,1)
             env.setBackgroundColor(colors.gray)
             env.clear()
