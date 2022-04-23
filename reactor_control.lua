@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 15,
+        build = 16,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -163,7 +163,7 @@ do
             program_settings = textutils.unserialise(file.readAll())
             file.close() local err
             local pass, serr = pcall(function() err = verify(program_settings,program_settings_default) end)
-            if serr then printError("Config file is corrupt!") load_settings(true)
+            if serr then printError("### Config file is corrupt!") sleep(2) load_settings(true)
             elseif err then printError("Config file is incomplete") save_settings() end
         else
             program_settings = deepCopy(program_settings_default)
