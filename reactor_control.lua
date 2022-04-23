@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 41,
+        build = 42,
     },
 	files = 
 	{
@@ -785,10 +785,10 @@ vox = {
 	end,
 }
 
+local __termOrig = term.current()
 startup = {
     
     start = function()
-
         term.setCursorBlink(true)
         print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
         sleep(1)
@@ -827,6 +827,7 @@ startup = {
     end,
 }
 crashScreen = function(...)
+    term.redirect(__termOrig)
     local pass, err = ...
     if not pass and err then
         if err == nil then err = '( no error given )' end
