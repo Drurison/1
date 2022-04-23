@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 3,
+        build = 4,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -152,6 +152,7 @@ do
     end
     function save_settings()
         print("Writing local config file...")
+        dev.print(program_info.files.config)
         local file = fs.open(program_info.files.config,"w")
         file.write(textutils.serialise(program_settings_default))
         file.close()
