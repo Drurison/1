@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 70
+        build = 71
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1065,7 +1065,7 @@ if args.voxTest then
             enabled = true,
             run = function()
                 write('Enter a message> ')
-                vox.send_message(vox.generatemessage(read()))
+                vox.send_message(vox.generate_message(read()))
             end,
         },
         {
