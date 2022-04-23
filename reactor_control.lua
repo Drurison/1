@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 4,
+        build = 5,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -202,6 +202,10 @@ args = {
             if string.lower(args.commandLine[i]) == "/test" then args.test = true end
             if string.lower(args.commandLine[i]) == "/verbose" then args.verbose = true end
             if string.lower(args.commandLine[i]) == "--verbose" then args.verbose = true end
+            if string.lower(args.commandLine[i]) == "/update" then args.update = true end
+            if string.lower(args.commandLine[i]) == "--update" then args.update = true end
+            if string.lower(args.commandLine[i]) == "/branch" then i=i+1 args.updateBranch = args.commandLine[i] or "master" end
+            if string.lower(args.commandLine[i]) == "--branch" then i=i+1 args.updateBranch = args.commandLine[i] or "master" end
             --dev.verbose(i, type(args.commandLine[i]), args.commandLine[i])
         end
         --sleep(1)
@@ -893,14 +897,94 @@ vox = {
         modem.transmit(channel,channel,vox_message)
     end,
 }
-
 startup = {
-    
+    update = function(branch)
+        local branch = branch or "master"
+        local address = "https://gitlab.com/peekofwar-craftos-programs/mekanism-fission-reactor-control/-/raw/"..branch.."/reactor_control.lua"
+        local run()
+        do
+            --[[
+                Program made by Peekofwar
+                (c) 2021
+                https://gitlab.com/Peekofwar
+                
+                It's a replacement for wget should you be
+                running an ancient version of CraftOS which
+                doesn't contain such a program.
+                It does ask to overwrite an existing file,
+                which the CraftOS wget can't do.
+                
+                wget https://gitlab.com/peekofwar-craftos-programs/misc/-/raw/main/wgetReplacement.lua
+                pastebin get EYwhWkvd wgetReplacement.lua
+            ]]
+            local function printUsage()
+                print("Usage: \n"..shell.getRunningProgram().." <url> [filename]")
+                print(shell.getRunningProgram().." run <url>")
+            end
+            local arguments = { address, shell.getRunningProgram()}
+            local function promptOverwrite()
+                printError("File already exists.")
+                print("Press [y] to overwrite, or press [n] to cancel.")
+                term.setCursorBlink(true)
+                while true do
+                    local event, key = os.pullEvent("char")
+                    if key == "y" then
+                        term.setCursorBlink(false)
+                        return true
+                    elseif key == "n" then
+                        printError("File download canceled.")
+                        term.setCursorBlink(false)
+                        return false
+                    end
+                end
+            end
+            local function run()
+                local request
+                local destination
+                local tempPath
+                local isRun
+                if arguments[1] == "run" then
+                    isRun = true
+                    request = arguments[2]
+                    tempPath = "/.temp/"..request:match("[^%/]*$")
+                else
+                    request = arguments[1]
+                    destination = arguments[2] or request:match("[^%/]*$")
+                end
+                print("Fetching file from '"..request.."'...")
+                local webfile,err = http.get(request)
+                if err then
+                    printError("Failed with error: "..err)
+                elseif isRun then
+                    local file = fs.open(tempPath,"w")
+                    file.write(webfile.readAll())
+                    file.close()
+                    print("Running '"..tempPath.."'...")
+                    shell.run(tempPath)
+                    fs.delete(tempPath)
+                else
+                    if fs.exists(destination) and promptOverwrite() or not fs.exists(destination) then
+                        local file = fs.open(destination,"w")
+                        file.write(webfile.readAll())
+                        file.close()
+                        print("File saved as '"..destination.."'.")
+                    end
+                end
+            end
+            if #arguments < 1 then
+                printUsage()
+            end
+            if #arguments > 0 then
+                run()
+            end
+        end
+    end,
     start = function()
         term.setCursorBlink(true)
         print(program_info.appName .. "\n"..program_info.version.string, "build "..program_info.version.build, "("..program_info.version.date..")\n")
-        print("Loading config...")
-        load_settings()
+        if args.update then startup.update(args.updateBranch) return end
+        --print("Loading config...")
+        --load_settings()
         sleep(1)
         local pass,result = equipment.findReactor()
         if equipment.reactor then
