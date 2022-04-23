@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 68
+        build = 69
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -970,8 +970,8 @@ function vox.queue(message)
     return vox.send_message(request)
 end
 vox_sequences = {
-	["reactorActivated"] = "deeuu: Fission reactor, activated.",
-    ["reactorDeactivated"] = "deeuu: Fission reactor, deactivated.",
+	["reactorActivated"] = "deeuu: Fission reactor activated.",
+    ["reactorDeactivated"] = "deeuu: Fission reactor deactivated.",
     ["overflowWaste"] = "bizwarn bizwarn: Warning: Waste overflow!",
     ["overflowSteam"] = "bizwarn bizwarn: Warning: Steam overflow!",
     ["noFuel"] = "buzwarn buzwarn: Warning: Fissil fuel depleted.",
