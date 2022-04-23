@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 27,
+        build = 28,
     },
 	files = 
 	{
@@ -405,8 +405,8 @@ systemMonitor = {
             end)
             --error("Program under heavy rewrite...",0)
 
-            os.queueEvent("r.system_screen")
-            sleep(0.05)
+            --os.queueEvent("r.system_screen")
+            --sleep(0.05)
         end
     end,
     thread_input = function()
@@ -439,7 +439,7 @@ systemMonitor = {
                 key_raw = nil
                 
             
-            elseif event[1] == "r.system_screen" then
+            else-- event[1] == "r.system_screen" then
                 systemMonitor.draw_monitor()
             end
             if args.dev then 
