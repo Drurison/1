@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 35,
+        build = 36,
     },
 	files = 
 	{
@@ -584,6 +584,7 @@ systemMonitor = {
         end
     end,
     draw_monitor = function(env)
+        if systemMonitor.alarms.disconnected then return end
         local env = gui.windows.monitor
         --sleep(1) os.queueEvent("system_interrupt")
         local w,h = env.getSize()
