@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 26,
+        build = 27,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -838,8 +838,15 @@ equipment = {
     reactor = peripheral.find("fissionReactor"),
     radiationSensors = {},
     findReactor = function()
-        local ap = peripheral.find("fissionReactor")
-        local mk = peripheral.find("fissionReactorLogicAdapter")
+        local ap, mk
+        if program_settings.peripherals.reactor then
+            local type = peripheral.getType(program_settings.peripherals.reactor)
+            ap = type == "fissionReactor" and program_settings.peripherals.reactor or nil
+            mk = type == "fissionReactorLogicAdapter" and program_settings.peripherals.reactor or nil
+        else
+            ap = peripheral.find("fissionReactor")
+            mk = peripheral.find("fissionReactorLogicAdapter")
+        end
         return (ap or mk) and true or false, ap and "legacy" or mk and "mek" or "none", ap or mk
     end,
     findSensors = function()
@@ -1001,15 +1008,11 @@ startup = {
         local state = load_settings()
         if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"]) end) sleep(1) end
         sleep(1)
-        local pass,result,perif
-        if program_settings.peripherals.reactor and #program_settings.peripherals.reactor>0 then
-            equipment.reactor = program_settings.peripherals.reactor
-        else
-            pass,result,perif = equipment.findReactor()
-            if pass and result then
-                equipment.reactor = perif
-                program_settings = perif
-            end
+        
+        local pass,result,perif = equipment.findReactor()
+        if pass and result then
+            equipment.reactor = perif
+            program_settings = perif
         end
         dev.verboseRed(result) dev.sleep(2)
         if equipment.reactor and peripheral.isPresent(peripheral.getName(equipment.reactor)) and not args.voxTest then
