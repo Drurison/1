@@ -4,9 +4,9 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {-- PUSHED TO MASTER
-        string = '1.1.0a5',
+        string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 79,
+        build = 1,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -106,17 +106,18 @@ progInfo.help = {
         error()
     end,
 }
---[[ Program User Config
+-- Program User Config
 local program_settings, save_settings, load_settings
 do
     local program_settings_default = {
         vox = {
+            enabled = false
             default_voice = "voice_legacy",
             modem_channel = 39934,
         },
         reactor_ID = nil,
-        startup_scramActive,
-        alarm_coolantMin = 10000,
+        startup_scramActive = true,
+        alarm_coolantMin = 50,
         alarm_integrityMin = 100,
     }
     local function deepCopy(tab)
@@ -168,7 +169,7 @@ do
         end
     end
 end
---]]
+--
 function math.clamp(vMin,vMax,x)
 	return math.max(math.min(x,vMax),vMin)
 end
@@ -897,6 +898,8 @@ startup = {
     start = function()
         term.setCursorBlink(true)
         print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
+        print("Loading config...")
+        load_settings()
         sleep(1)
         local pass,result = equipment.findReactor()
         if equipment.reactor then
