@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 16,
+        build = 17,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -163,8 +163,8 @@ do
             program_settings = textutils.unserialise(file.readAll())
             file.close() local err
             local pass, serr = pcall(function() err = verify(program_settings,program_settings_default) end)
-            if serr then printError("### Config file is corrupt!") sleep(2) load_settings(true)
-            elseif err then printError("Config file is incomplete") save_settings() end
+            if serr then printError("### Config file is corrupt!") sleep(2) load_settings(true) return "corrupt"
+            elseif err then printError("Config file is incomplete") save_settings() return "update" end
         else
             program_settings = deepCopy(program_settings_default)
             save_settings()
@@ -987,7 +987,8 @@ startup = {
         print(program_info.appName .. "\n"..program_info.version.string, "build "..program_info.version.build, "("..program_info.version.date..")\n")
         if args.update then startup.update(args.updateBranch) return end
         print("Loading config...")
-        load_settings()
+        local state = load_settings()
+        if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"])) end
         sleep(1)
         local pass,result = equipment.findReactor()
         if equipment.reactor then
@@ -1073,6 +1074,7 @@ vox_sequences = {
     ["noCoolant"] = "bizwarn bizwarn: Warning: Insufficient reactor coolant!",
     ["highTemp"] = "bizwarn bizwarn: Warning: Reactor temperature critical!",
     ["manualIllAdvised"] = "deeuu: Warning: Reactor activation is ill advised. Please check control terminal.",
+    ["configCorrupt"] = "deeuu: Warning: Reactor config corrupted. deeoo: Check terminal configuration.",
 }
 
 if args.voxTest then
