@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 30,
+        build = 31,
     },
 	files = 
 	{
@@ -450,7 +450,7 @@ systemMonitor = {
                 
             
             else-- event[1] == "r.system_screen" then
-                systemMonitor.draw_monitor()
+                systemMonitor.draw_monitor(gui.windows.monitor)
             end
             if args.dev then 
                 term.setCursorPos(1,h)
@@ -521,7 +521,15 @@ systemMonitor = {
             barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.red,colors.gray,env)
         else
             env.setTextColor(colors.white)
-            barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.lightBlue,colors.gray,env)
+            barMeter(2,
+                6,
+                w/2-2,
+                temp,
+                1000,
+                "Temp: ",
+                math.floor(temp).."K",
+                colors.lightBlue,
+                colors.gray,env)
         end
         if systemMonitor.vars.isNoCoolant and systemMonitor.vars.warnFlash then
             env.setTextColor(colors.red)
