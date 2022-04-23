@@ -4,9 +4,9 @@ local progInfo = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.1.0a3',
-	    date = 'April 22, 2022',
-        build = 48,
+        string = '1.1.0a4',
+	    date = 'April 23, 2022',
+        build = 49
     },
 	files = 
 	{
@@ -550,9 +550,6 @@ systemMonitor = {
         end
     end,
     thread_input = function()
-        gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
-        gui.windows.monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos))
-        gui.basic.draw(gui.windows.menu)
         while true do
             local event = {os.pullEvent()}
             if event[1] == "key" then
@@ -582,8 +579,8 @@ systemMonitor = {
                 
             
             else-- event[1] == "r.system_screen" then
-                systemMonitor.draw_monitor(gui.windows.monitor)
-                gui.basic.draw(gui.windows.menu)
+                --systemMonitor.draw_monitor(gui.windows.monitor)
+               -- gui.basic.draw(gui.windows.menu)
             end
             if args.dev then 
                 term.setCursorPos(1,h)
@@ -596,119 +593,119 @@ systemMonitor = {
             end
         end
     end,
-    draw_monitor = function(env)
-        if systemMonitor.alarms.disconnected then return end
-        local env = gui.windows.monitor
-        --sleep(1) os.queueEvent("system_interrupt")
-        local w,h = env.getSize()
-        local disconnect_warn_state = false
+    thread_monitor = function()
+        gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
+        gui.windows.monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos))
+        gui.basic.draw(gui.windows.menu)
+        while true do
+            sleep(0.75)
+            if not systemMonitor.alarms.disconnected then
+                local env = gui.windows.monitor
+                --sleep(1) os.queueEvent("system_interrupt")
+                local w,h = env.getSize()
+                local disconnect_warn_state = false
 
-        local status = equipment.reactor.getStatus()
+                local status = equipment.reactor.getStatus()
 
-        local fuel = systemMonitor.data.fuel or -1
-        local fuel_cap = systemMonitor.data.fuel_cap or -1
-        local fuel_percent = systemMonitor.data.fuel_percent or -1
-        local waste = systemMonitor.data.waste or -1
-        local waste_cap = systemMonitor.data.waste_cap or -1
-        local waste_percent = systemMonitor.data.waste_percent or -1
+                local fuel = systemMonitor.data.fuel or -1
+                local fuel_cap = systemMonitor.data.fuel_cap or -1
+                local fuel_percent = systemMonitor.data.fuel_percent or -1
+                local waste = systemMonitor.data.waste or -1
+                local waste_cap = systemMonitor.data.waste_cap or -1
+                local waste_percent = systemMonitor.data.waste_percent or -1
 
-        local coolant = systemMonitor.data.coolant or -1
-        local coolant_cap = systemMonitor.data.coolant_cap or -1
-        local coolant_percent = systemMonitor.data.coolant_percent or -1
-        local steam = systemMonitor.data.steam or -1
-        local steam_cap = systemMonitor.data.steam_cap or -1
-        local steam_percent = systemMonitor.data.steam_percent or -1
-        local temp = systemMonitor.data.temp or -1 -- Kelvin
+                local coolant = systemMonitor.data.coolant or -1
+                local coolant_cap = systemMonitor.data.coolant_cap or -1
+                local coolant_percent = systemMonitor.data.coolant_percent or -1
+                local steam = systemMonitor.data.steam or -1
+                local steam_cap = systemMonitor.data.steam_cap or -1
+                local steam_percent = systemMonitor.data.steam_percent or -1
+                local temp = systemMonitor.data.temp or -1 -- Kelvin
 
-        local damage = systemMonitor.data.damage or -1
+                local damage = systemMonitor.data.damage or -1
 
-        env.clear()
-        env.setCursorPos(2,2)
+                env.clear()
+                env.setCursorPos(2,2)
 
-        if status then
-            env.setTextColor(colors.green)
-            env.write("Reactor Online") 
-        else
-            env.setTextColor(colors.red)
-            env.write("Reactor Offline")
-        end
-        if systemMonitor.alarms.master then
-            if systemMonitor.vars.warnFlash then
+                if status then
+                    env.setTextColor(colors.green)
+                    env.write("Reactor Online") 
+                else
+                    env.setTextColor(colors.red)
+                    env.write("Reactor Offline")
+                end
+                if systemMonitor.alarms.master then
+                    if systemMonitor.vars.warnFlash then
+                        env.setTextColor(colors.white)
+                        env.setBackgroundColor(colors.black)
+                    else
+                        env.setTextColor(colors.white)
+                        env.setBackgroundColor(colors.red)
+                    end
+                    env.setCursorPos(1,1)
+                    env.clearLine()
+                    term.redirect(env)
+                    cWrite("!! ===>> ALARM <<=== !!")
+                    term.redirect(gui.rootTerminal)
+                    env.setBackgroundColor(colors.black)
+                end
+                env.setCursorPos(2,5)
                 env.setTextColor(colors.white)
-                env.setBackgroundColor(colors.black)
-            else
-                env.setTextColor(colors.white)
-                env.setBackgroundColor(colors.red)
+                --env.write("Temp: "..math.floor(temp).."K")
+                if systemMonitor.vars.isTempCritical and systemMonitor.vars.warnFlash then
+                    env.setTextColor(colors.red)
+                    barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.red,colors.gray,env)
+                else
+                    env.setTextColor(colors.white)
+                    barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.lightBlue,colors.gray,env)
+                end
+                if systemMonitor.vars.isNoCoolant and systemMonitor.vars.warnFlash then
+                    env.setTextColor(colors.red)
+                    barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.red,colors.gray,env)
+                else
+                    env.setTextColor(colors.white)
+                    barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.lightBlue,colors.gray,env)
+                end
+                if systemMonitor.vars.isSteamFull and systemMonitor.vars.warnFlash then
+                    env.setTextColor(colors.red)
+                    barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.red,colors.gray,env)
+                else
+                    env.setTextColor(colors.white)
+                    barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.lightBlue,colors.gray,env)
+                end
+                if systemMonitor.vars.isDamaged and systemMonitor.vars.warnFlash then
+                    env.setTextColor(colors.red)
+                    barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.red,colors.gray,env)
+                else
+                    env.setTextColor(colors.white)
+                    barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.lightBlue,colors.gray,env)
+                end
+                if systemMonitor.vars.isNoFuel and systemMonitor.vars.warnFlash then
+                    env.setTextColor(colors.red)
+                    barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.red,colors.gray,env)
+                else
+                    env.setTextColor(colors.white)
+                    barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.lightBlue,colors.gray,env)
+                end
+                if systemMonitor.vars.isWasteFull and systemMonitor.vars.warnFlash then
+                    env.setTextColor(colors.red)
+                    barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.red,colors.gray,env)
+                    else
+                    env.setTextColor(colors.white)
+                    barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.lightBlue,colors.gray,env)
+                end
+                --[[local radiation = systemMonitor.getRad()
+                env.setCursorPos(2,h)
+                if radiation[1] then
+                    env.setTextColor(colors.red)
+                else
+                    env.setTextColor(colors.green)
+                end
+                env.write("Radiation: "..(radiation[2]))]]
             end
-            env.setCursorPos(1,1)
-            env.clearLine()
-            term.redirect(env)
-            cWrite("!! ===>> ALARM <<=== !!")
-            term.redirect(gui.rootTerminal)
-            env.setBackgroundColor(colors.black)
         end
-        env.setCursorPos(2,5)
-        env.setTextColor(colors.white)
-        --env.write("Temp: "..math.floor(temp).."K")
-        if systemMonitor.vars.isTempCritical and systemMonitor.vars.warnFlash then
-            env.setTextColor(colors.red)
-            barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.red,colors.gray,env)
-        else
-            env.setTextColor(colors.white)
-            barMeter(2,
-                6,
-                w/2-2,
-                temp,
-                1000,
-                "Temp: ",
-                math.floor(temp).."K",
-                colors.lightBlue,
-                colors.gray,env)
-        end
-        if systemMonitor.vars.isNoCoolant and systemMonitor.vars.warnFlash then
-            env.setTextColor(colors.red)
-            barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.red,colors.gray,env)
-        else
-            env.setTextColor(colors.white)
-            barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.lightBlue,colors.gray,env)
-        end
-        if systemMonitor.vars.isSteamFull and systemMonitor.vars.warnFlash then
-            env.setTextColor(colors.red)
-            barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.red,colors.gray,env)
-        else
-            env.setTextColor(colors.white)
-            barMeter(2,9,w/2-2,steam,steam_cap,"Steam: ",math.floor(steam).."mB",colors.lightBlue,colors.gray,env)
-        end
-        if systemMonitor.vars.isDamaged and systemMonitor.vars.warnFlash then
-            env.setTextColor(colors.red)
-            barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.red,colors.gray,env)
-        else
-            env.setTextColor(colors.white)
-            barMeter(w/2+1,9,w/2-1,100-damage,100,"Integrity: ",math.floor(100-damage).."%",colors.lightBlue,colors.gray,env)
-        end
-        if systemMonitor.vars.isNoFuel and systemMonitor.vars.warnFlash then
-            env.setTextColor(colors.red)
-            barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.red,colors.gray,env)
-        else
-            env.setTextColor(colors.white)
-            barMeter(2,12,w/2-2,fuel,fuel_cap,"Fuel: ",math.floor(fuel).."mB",colors.lightBlue,colors.gray,env)
-        end
-        if systemMonitor.vars.isWasteFull and systemMonitor.vars.warnFlash then
-            env.setTextColor(colors.red)
-            barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.red,colors.gray,env)
-            else
-            env.setTextColor(colors.white)
-            barMeter(w/2+1,12,w/2-1,waste,waste_cap,"Waste: ",math.floor(waste).."mB",colors.lightBlue,colors.gray,env)
-        end
-        --[[local radiation = systemMonitor.getRad()
-        env.setCursorPos(2,h)
-        if radiation[1] then
-            env.setTextColor(colors.red)
-        else
-            env.setTextColor(colors.green)
-        end
-        env.write("Radiation: "..(radiation[2]))]]
-
+    end,
+    draw_monitor = function(env)
     end,
 }
 
@@ -835,7 +832,7 @@ startup = {
             local process_id = multishell.getCurrent()
             multishell.setTitle(process_id,"Reactor Control")
         end
-        parallel.waitForAll(listen.fallbackTerminate,systemMonitor.thread_main,systemMonitor.thread_input)
+        parallel.waitForAll(listen.fallbackTerminate,systemMonitor.thread_main,systemMonitor.thread_input,systemMonitor.thread_monitor)
     end,
 }
 local __termOrig = term.current()
