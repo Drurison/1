@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 32,
+        build = 33,
     },
 	files = 
 	{
@@ -416,6 +416,102 @@ systemMonitor = {
 
             --os.queueEvent("r.system_screen")
             --sleep(0.05)
+
+        if systemMonitor.alarms.master and not systemMonitor.alarms.masterAlarmed then
+            for i=1, #gui.menus.main do
+                if gui.menus.main[i].name == "Activate" then
+                    gui.menus.main[i].enabled = false
+                elseif gui.menus.main[i].name == "Scram" then
+                    gui.menus.main[i].enabled = false
+                elseif gui.menus.main[i].name == "Reset" then
+                    gui.menus.main[i].enabled = true
+                end
+            end
+        elseif not systemMonitor.alarms.masterAlarmed then
+            if systemMonitor.vars.isActive and not status then
+                for i=1, #gui.menus.main do
+                    if gui.menus.main[i].name == "Activate" then
+                        gui.menus.main[i].enabled = true
+                    elseif gui.menus.main[i].name == "Scram" then
+                        gui.menus.main[i].enabled = false
+                    end
+                end
+                --os.queueEvent("system_interrupt")
+                vox.queue(vox_sequences.reactorDeactivated)
+                systemMonitor.vars.isActive = false
+            elseif not systemMonitor.vars.isActive and status then
+                for i=1, #gui.menus.main do
+                    if gui.menus.main[i].name == "Activate" then
+                        gui.menus.main[i].enabled = false
+                    elseif gui.menus.main[i].name == "Scram" then
+                        gui.menus.main[i].enabled = true
+                        --gui.item = i
+                    end
+                end
+                --os.queueEvent("system_interrupt")
+                vox.queue(vox_sequences.reactorActivated)
+                systemMonitor.vars.isActive = true
+            end
+        end
+        if not systemMonitor.alarms.master then
+            if systemMonitor.vars.isNoFuel and fuel > 0 then
+                systemMonitor.vars.isNoFuel = false
+            elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isNoFuel = true
+                vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
+            end
+
+            if systemMonitor.vars.isNoCoolant and coolant > 0 then
+                systemMonitor.vars.isNoCoolant = false
+            elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isNoCoolant = true
+                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
+            end
+
+            if systemMonitor.vars.isSteamFull and steam < steam_cap-500 then
+                systemMonitor.vars.isSteamFull = false
+            elseif steam >= steam_cap-500 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isSteamFull = true
+                vox.queue(vox_sequences.overflowSteam) dev.pos(11,1) dev.write('VOX overflowSteam')
+            end
+
+            if systemMonitor.vars.isWasteFull and waste < waste_cap-500 then
+                systemMonitor.vars.isWasteFull = false
+            elseif waste >= waste_cap-500 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isWasteFull = true
+                vox.queue(vox_sequences.overflowWaste) dev.pos(11,1) dev.write('VOX overflowWaste')
+            end
+
+            if systemMonitor.vars.isTempCritical and temp < 1000 then
+                systemMonitor.vars.isTempCritical = false
+            elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isTempCritical = true
+                vox.queue(vox_sequences.highTemp) dev.pos(11,1) dev.write('VOX highTemp')
+            end
+        end
+
+        if waste == waste_cap then
+            systemMonitor.alarms.radiation = true
+        end
+        if systemMonitor.alarms.radiation and systemMonitor.alarms.radiation_CoolDown == 0 then
+            intercom.playSound("aci.vox.voice_legacy.bizwarn")
+            systemMonitor.alarms.radiation_CoolDown = 5
+        elseif systemMonitor.alarms.radiation_CoolDown > 0 then
+            systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
+        end
+
+        if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
+            equipment.reactor.scram()
+        end
+        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
+            systemMonitor.alarms.master = true
+        end
+--  600 K moderate
+-- 1000 K high
+-- 1200 K critical
+        systemMonitor.vars.warnFlash = not systemMonitor.vars.warnFlash
+        if systemMonitor.vars.forceCheck then systemMonitor.vars.forceCheck = false end
+        --sleep(0.75)
         end
     end,
     thread_input = function()
@@ -574,102 +670,6 @@ systemMonitor = {
             env.setTextColor(colors.green)
         end
         env.write("Radiation: "..(radiation[2]))]]
-
-        if systemMonitor.alarms.master and not systemMonitor.alarms.masterAlarmed then
-            for i=1, #gui.menus.main do
-                if gui.menus.main[i].name == "Activate" then
-                    gui.menus.main[i].enabled = false
-                elseif gui.menus.main[i].name == "Scram" then
-                    gui.menus.main[i].enabled = false
-                elseif gui.menus.main[i].name == "Reset" then
-                    gui.menus.main[i].enabled = true
-                end
-            end
-        elseif not systemMonitor.alarms.masterAlarmed then
-            if systemMonitor.vars.isActive and not status then
-                for i=1, #gui.menus.main do
-                    if gui.menus.main[i].name == "Activate" then
-                        gui.menus.main[i].enabled = true
-                    elseif gui.menus.main[i].name == "Scram" then
-                        gui.menus.main[i].enabled = false
-                    end
-                end
-                --os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorDeactivated)
-                systemMonitor.vars.isActive = false
-            elseif not systemMonitor.vars.isActive and status then
-                for i=1, #gui.menus.main do
-                    if gui.menus.main[i].name == "Activate" then
-                        gui.menus.main[i].enabled = false
-                    elseif gui.menus.main[i].name == "Scram" then
-                        gui.menus.main[i].enabled = true
-                        --gui.item = i
-                    end
-                end
-                --os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorActivated)
-                systemMonitor.vars.isActive = true
-            end
-        end
-        if not systemMonitor.alarms.master then
-            if systemMonitor.vars.isNoFuel and fuel > 0 then
-                systemMonitor.vars.isNoFuel = false
-            elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
-                systemMonitor.vars.isNoFuel = true
-                vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
-            end
-
-            if systemMonitor.vars.isNoCoolant and coolant > 0 then
-                systemMonitor.vars.isNoCoolant = false
-            elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
-                systemMonitor.vars.isNoCoolant = true
-                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
-            end
-
-            if systemMonitor.vars.isSteamFull and steam < steam_cap-500 then
-                systemMonitor.vars.isSteamFull = false
-            elseif steam >= steam_cap-500 and (status or systemMonitor.vars.forceCheck) then
-                systemMonitor.vars.isSteamFull = true
-                vox.queue(vox_sequences.overflowSteam) dev.pos(11,1) dev.write('VOX overflowSteam')
-            end
-
-            if systemMonitor.vars.isWasteFull and waste < waste_cap-500 then
-                systemMonitor.vars.isWasteFull = false
-            elseif waste >= waste_cap-500 and (status or systemMonitor.vars.forceCheck) then
-                systemMonitor.vars.isWasteFull = true
-                vox.queue(vox_sequences.overflowWaste) dev.pos(11,1) dev.write('VOX overflowWaste')
-            end
-
-            if systemMonitor.vars.isTempCritical and temp < 1000 then
-                systemMonitor.vars.isTempCritical = false
-            elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
-                systemMonitor.vars.isTempCritical = true
-                vox.queue(vox_sequences.highTemp) dev.pos(11,1) dev.write('VOX highTemp')
-            end
-        end
-
-        if waste == waste_cap then
-            systemMonitor.alarms.radiation = true
-        end
-        if systemMonitor.alarms.radiation and systemMonitor.alarms.radiation_CoolDown == 0 then
-            intercom.playSound("aci.vox.voice_legacy.bizwarn")
-            systemMonitor.alarms.radiation_CoolDown = 5
-        elseif systemMonitor.alarms.radiation_CoolDown > 0 then
-            systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
-        end
-
-        if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
-            equipment.reactor.scram()
-        end
-        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500) then
-            systemMonitor.alarms.master = true
-        end
---  600 K moderate
--- 1000 K high
--- 1200 K critical
-        systemMonitor.vars.warnFlash = not systemMonitor.vars.warnFlash
-        if systemMonitor.vars.forceCheck then systemMonitor.vars.forceCheck = false end
-        sleep(0.75)
 
     end,
 }
