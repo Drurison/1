@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 18,
+        build = 19,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -115,24 +115,31 @@ do
             default_voice = "voice_legacy",
             modem_channel = 39934,
         },
-        reactor_ID = nil,
-        startup_scramActive = true,
-        alarm_coolantMin = 50,
-        alarm_integrityMin = 100,
+        peripherals = {
+            reactor = nil,
+            radiation_sensors = {},
+        },
+        startup = {
+            scram_active = true,
+        },
+        alarm = {
+            coolant_min = 50,
+            integrity_min = 100,
+        },
     }
     local function deepCopy(tab)
-        --printError("-Function start")
+        dev.verboseRed("-Function start")
         local a = {}
         for k, v in pairs(tab) do
             if type(v) == "table" then
-                --print("Key: "..k.." = ".."( table )")
+                dev.verbose("Key: "..k.." = ".."( table )")
                 a[k]=deepCopy(v)
             else
-                --print("Key: "..k.." = "..tostring(v))
+                dev.verbose("Key: "..k.." = "..tostring(v))
                 a[k]=v
             end
         end
-        --printError("--Function return")
+        dev.verboseRed("--Function return")
         return a
     end
     local function verify(target,reference)
@@ -223,6 +230,11 @@ dev = {
     verbose = function(...)
         if args.verbose then
             print(...)
+        end
+    end,
+    verboseRed = function(...)
+        if args.verbose then
+            printError(...)
         end
     end,
     write = function(...)
@@ -988,13 +1000,22 @@ startup = {
         if args.update then startup.update(args.updateBranch) return end
         print("Loading config...")
         local state = load_settings()
-        if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"]) end) end
+        if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"]) end) sleep(1) end
         sleep(1)
-        local pass,result = equipment.findReactor()
-        if equipment.reactor then
+        
+        if program_settings.peripherals.reactor and #program_settings.peripherals.reactor>0 then
+            equipment.reactor = program_settings.peripherals.reactor
+        else
+            local pass,result = equipment.findReactor()
+            if pass and result then
+                equipment.reactor = result
+                program_settings = result
+            end
+        end
+        if equipment.reactor and peripheral.isPresent(equipment.reactor) and not args.voxTest  then
             print("Found: "..peripheral.getName(equipment.reactor))
-            if result == "mek" and not args.voxTest then
-                crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.")
+            if result == "mek"then
+                crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.\n\nRun '"..shell.getRunningProgram().." /update' to fetch the latest version.")
                 equipment.reactor.scram()
                 return
             end
@@ -1140,6 +1161,13 @@ if args.voxTest then
             enabled = true,
             run = function()
                 vox.queue(vox_sequences.manualIllAdvised)
+            end,
+        },
+        {
+            name = "test vox configCorrupt",
+            enabled = true,
+            run = function()
+                vox.queue(vox_sequences.configCorrupt)
             end,
         },
         {
