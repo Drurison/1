@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 14,
+        build = 15,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -161,9 +161,10 @@ do
         if fs.exists(program_info.files.config) and not forceDefault then
             local file = fs.open(program_info.files.config,"r")
             program_settings = textutils.unserialise(file.readAll())
-            file.close()
-            local err = verify(program_settings,program_settings_default)
-            if err then printError("Config file is incomplete") save_settings() end
+            file.close() local err
+            local pass, serr = pcall(function() err = verify(program_settings,program_settings_default) end)
+            if serr then printError("Config file is corrupt!") load_settings(true)
+            elseif err then printError("Config file is incomplete") save_settings() end
         else
             program_settings = deepCopy(program_settings_default)
             save_settings()
