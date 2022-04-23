@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 33,
+        build = 34,
     },
 	files = 
 	{
@@ -404,6 +404,29 @@ systemMonitor = {
                 systemMonitor.data.damage = equipment.reactor.getDamagePercent()
             end)
 
+            local env = gui.windows.monitor
+            --sleep(1) os.queueEvent("system_interrupt")
+            local w,h = env.getSize()
+            local disconnect_warn_state = false
+
+            local status = equipment.reactor.getStatus()
+
+            local fuel = systemMonitor.data.fuel or -1
+            local fuel_cap = systemMonitor.data.fuel_cap or -1
+            local fuel_percent = systemMonitor.data.fuel_percent or -1
+            local waste = systemMonitor.data.waste or -1
+            local waste_cap = systemMonitor.data.waste_cap or -1
+            local waste_percent = systemMonitor.data.waste_percent or -1
+
+            local coolant = systemMonitor.data.coolant or -1
+            local coolant_cap = systemMonitor.data.coolant_cap or -1
+            local coolant_percent = systemMonitor.data.coolant_percent or -1
+            local steam = systemMonitor.data.steam or -1
+            local steam_cap = systemMonitor.data.steam_cap or -1
+            local steam_percent = systemMonitor.data.steam_percent or -1
+            local temp = systemMonitor.data.temp or -1 -- Kelvin
+
+            local damage = systemMonitor.data.damage or -1
             
             if systemMonitor.alarms.master then
                 
