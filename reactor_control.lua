@@ -1,4 +1,4 @@
-local progInfo = {
+local program_info = {
 	path = shell.getRunningProgram(),
 	extension = shell.getRunningProgram():match("[^%.]*$"),
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
@@ -6,7 +6,7 @@ local progInfo = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 2,
+        build = 3,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -14,15 +14,15 @@ local progInfo = {
 	},
 }
 
-progInfo.help = {
+program_info.help = {
     display = function()
         term.setCursorPos(1,1) term.clear()
         local w, h = term.getSize()
         local helpScreen = window.create(term.current(),1,1,w,h-1)
         local sw, sh = helpScreen.getSize()
         local lines = {
-            {colors.yellow,progInfo.appName},
-            "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
+            {colors.yellow,program_info.appName},
+            "v"..program_info.version.string.." build "..program_info.version.build.." ("..program_info.version.date..")",
             "",
             {colors.lightBlue,"Switches:"},
             " /dev   - Activates dev functions",
@@ -207,7 +207,7 @@ args = {
     end,
 }
 args.scanCommandLine()
-if args.help then progInfo.help.display() end
+if args.help then program_info.help.display() end
 dev = {
     print = function(...)
         if args.dev then
@@ -897,7 +897,7 @@ startup = {
     
     start = function()
         term.setCursorBlink(true)
-        print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
+        print(program_info.appName .. "\n"..program_info.version.string, "build "..program_info.version.build, "("..program_info.version.date..")\n")
         print("Loading config...")
         load_settings()
         sleep(1)
