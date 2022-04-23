@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 29,
+        build = 30,
     },
 	files = 
 	{
@@ -363,8 +363,8 @@ systemMonitor = {
             while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
                 systemMonitor.alarms.master = true
                 systemMonitor.alarms.disconnected = true
-                term.redirect(systemMonitor.environments.monitor)
-                systemMonitor.environments.monitor.clear()
+                term.redirect(gui.windows.monitor)
+                gui.windows.monitor.clear()
                 disconnect_warn_state = not disconnect_warn_state
                 if disconnect_warn_state then 
                     term.setTextColor(colors.red)
@@ -403,6 +403,15 @@ systemMonitor = {
 
                 systemMonitor.data.damage = equipment.reactor.getDamagePercent()
             end)
+
+            
+            if systemMonitor.alarms.master then
+                
+                if systemMonitor.data.status then
+                    equipment.reactor.scram()
+                    vox.queue(vox_sequences.manualIllAdvised)
+                end
+            end
             --error("Program under heavy rewrite...",0)
 
             --os.queueEvent("r.system_screen")
@@ -411,6 +420,7 @@ systemMonitor = {
     end,
     thread_input = function()
         gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
+        gui.windows.monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos))
         while true do
             local event = {os.pullEvent()}
             if event[1] == "key" then
@@ -453,12 +463,8 @@ systemMonitor = {
             end
         end
     end,
-    environments = {
-        monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos)),
-        menu = false,
-    },
-    draw_monitor = function()
-        local env = systemMonitor.environments.monitor
+    draw_monitor = function(env)
+        local env = gui.windows.monitor
         --sleep(1) os.queueEvent("system_interrupt")
         local w,h = env.getSize()
         local disconnect_warn_state = false
@@ -493,12 +499,6 @@ systemMonitor = {
             env.write("Reactor Offline")
         end
         if systemMonitor.alarms.master then
-            
-            if status then
-                equipment.reactor.scram()
-                vox.queue(vox_sequences.manualIllAdvised)
-            end
-
             if systemMonitor.vars.warnFlash then
                 env.setTextColor(colors.white)
                 env.setBackgroundColor(colors.black)
