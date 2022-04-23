@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a4',
 	    date = 'April 23, 2022',
-        build = 49
+        build = 50
     },
 	files = 
 	{
@@ -544,7 +544,6 @@ systemMonitor = {
 --  600 K moderate
 -- 1000 K high
 -- 1200 K critical
-        systemMonitor.vars.warnFlash = not systemMonitor.vars.warnFlash
         if systemMonitor.vars.forceCheck then systemMonitor.vars.forceCheck = false end
         --sleep(0.75)
         end
@@ -703,6 +702,7 @@ systemMonitor = {
                 end
                 env.write("Radiation: "..(radiation[2]))]]
             end
+            systemMonitor.vars.warnFlash = not systemMonitor.vars.warnFlash
         end
     end,
     draw_monitor = function(env)
