@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 66
+        build = 67
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -884,7 +884,7 @@ vox = {
         return request
     end,
     send_message = function(vox_message)
-        local channel = program_settings.vox.modem_channel or 39934
+        local channel = --[[program_settings.vox.modem_channel or]] 39934
         local modem = peripheral.find("modem")
         modem.transmit(channel,channel,request)
     end,
