@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 46,
+        build = 47,
     },
 	files = 
 	{
@@ -806,7 +806,7 @@ startup = {
                 return
             end
         else
-            crashScreen(false,"Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n")
+            crashScreen(false,"Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.")
             return
         end
         if equipment.radiationSensors then
