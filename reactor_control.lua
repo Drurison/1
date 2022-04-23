@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 37,
+        build = 38,
     },
 	files = 
 	{
@@ -441,6 +441,16 @@ systemMonitor = {
             --sleep(0.05)
 
         if systemMonitor.alarms.master and not systemMonitor.alarms.masterAlarmed then
+            for i=1, #gui.menus.main do
+                if gui.menus.main[i].name == "Activate" then
+                    gui.menus.main[i].enabled = false
+                elseif gui.menus.main[i].name == "Scram" then
+                    gui.menus.main[i].enabled = false
+                elseif gui.menus.main[i].name == "Reset" then
+                    gui.menus.main[i].enabled = true
+                end
+            end 
+        elseif systemMonitor.alarms.disconnected and not systemMonitor.alarms.masterAlarmed then
             for i=1, #gui.menus.main do
                 if gui.menus.main[i].name == "Activate" then
                     gui.menus.main[i].enabled = false
