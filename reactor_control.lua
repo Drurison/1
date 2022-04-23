@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a4',
 	    date = 'April 23, 2022',
-        build = 52
+        build = 53
     },
 	files = 
 	{
@@ -491,11 +491,11 @@ systemMonitor = {
             end
         end
         if not systemMonitor.alarms.master then
-            if systemMonitor.vars.isNoFuel and fuel > 0 then
-                systemMonitor.vars.isNoFuel = false
+            if systemMonitor.vars.isDamaged and math.floor(100-damage) >= systemMonitor.warnConfig.integrityWarn then
+                systemMonitor.vars.isDamaged = false
             elseif math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn and (status or systemMonitor.vars.forceCheck) then
-                systemMonitor.vars.isNoFuel = true
-                vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
+                systemMonitor.vars.isDamaged = true
+                --vox.queue(vox_sequences.damaged) dev.pos(11,1) dev.write('VOX damaged')
             end
 
             if systemMonitor.vars.isNoFuel and fuel > 0 then
