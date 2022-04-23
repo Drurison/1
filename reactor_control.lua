@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 6,
+        build = 7,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -202,10 +202,10 @@ args = {
             if string.lower(args.commandLine[i]) == "/test" then args.test = true end
             if string.lower(args.commandLine[i]) == "/verbose" then args.verbose = true end
             if string.lower(args.commandLine[i]) == "--verbose" then args.verbose = true end
-            if string.lower(args.commandLine[i]) == "/update" then args.update = true end
-            if string.lower(args.commandLine[i]) == "--update" then args.update = true end
-            if string.lower(args.commandLine[i]) == "/branch" then i=i+1 args.updateBranch = args.commandLine[i] or "master" end
-            if string.lower(args.commandLine[i]) == "--branch" then i=i+1 args.updateBranch = args.commandLine[i] or "master" end
+            if string.lower(args.commandLine[i]) == "/update" then args.update = true
+                i=i+1 args.updateBranch = args.commandLine[i] end
+            if string.lower(args.commandLine[i]) == "--update" then args.update = true
+                i=i+1 args.updateBranch = args.commandLine[i] end
             --dev.verbose(i, type(args.commandLine[i]), args.commandLine[i])
         end
         --sleep(1)
