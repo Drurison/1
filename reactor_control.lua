@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a4',
 	    date = 'April 23, 2022',
-        build = 56
+        build = 57
     },
 	files = 
 	{
@@ -36,6 +36,7 @@ progInfo.help = {
             {colors.lightBlue,"Changelong v1.1.0:"},
             " + Added reactor disconnect alarm state and message",
             "   (no longer a program stop-error).",
+            " + Added alarm state for reactor damage.",
             " * Rewrote/rearranged core code to mitigate input",
             "   lag.",
             {colors.lightBlue,"Changelong v1.0.3:"},
@@ -392,6 +393,7 @@ systemMonitor = {
                 term.setCursorPos(1,7)
                 cWrite("Check reactor status immediately.")
                 sleep(0.25)
+                if peripheral.isPresent(peripheral.getName(equipment.reactor)) then equipment.reactor.scram() end
                 term.redirect(gui.rootTerminal)
                 --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
