@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 20,
+        build = 21,
     },
 	files = 
 	{
@@ -466,7 +466,7 @@ systemMonitor = {
     end,
     thread_input = function()
         while true do
-            local event = {os.pullEvent()}
+            local event = os.pullEvent()
             if event == "r.system_screen" then
                 systemMonitor.draw_monitor()
             elseif event == "key" then
