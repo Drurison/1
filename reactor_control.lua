@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 73,
+        build = 74,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -685,7 +685,7 @@ systemMonitor = {
         gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
         gui.windows.monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos))
         gui.basic.draw(gui.windows.menu)
-        if args.voxTest then return end
+        if args.voxTest then if equipment.reactor and equipment.reactor.getStatus then equipment.reactor.scram() end return end
         while true do
             sleep(0.75)
             if not systemMonitor.alarms.disconnected then
@@ -1072,10 +1072,6 @@ if args.voxTest then
             name = "Exit",
             enabled = true,
             run = function()
-                if equipment.reactor.getStatus() then
-                    printError('REACTOR IS ACTIVE; SCRAMMING...')
-                    equipment.reactor.scram()
-                end
                 dev.write("Rainbow Dash is best pegasus!") dev.sleep(0.25)
                 error()
             end,
