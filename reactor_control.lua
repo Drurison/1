@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 10,
+        build = 11,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -902,6 +902,7 @@ startup = {
         local branch = branch or "master"
         local address = "https://gitlab.com/peekofwar-craftos-programs/mekanism-fission-reactor-control/-/raw/"..branch.."/reactor_control.lua"
         local run
+        print("Fetching update from branch: "..branch)
         do
             --[[
                 Program made by Peekofwar
