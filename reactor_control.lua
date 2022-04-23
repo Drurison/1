@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 17,
+        build = 18,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -988,7 +988,7 @@ startup = {
         if args.update then startup.update(args.updateBranch) return end
         print("Loading config...")
         local state = load_settings()
-        if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"])) end
+        if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"]) end) end
         sleep(1)
         local pass,result = equipment.findReactor()
         if equipment.reactor then
