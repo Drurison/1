@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 44,
+        build = 45,
     },
 	files = 
 	{
@@ -732,7 +732,7 @@ equipment = {
     findReactor = function()
         local ap = peripheral.find("fissionReactor")
         local mk = peripheral.find("fissionReactorLogicAdapter")
-        equipment.reactor = peripheral.wrap(ap or mk)
+        equipment.reactor = ap or mk
         return (ap or mk) and true or false, ap and "legacy" or mk and "mek" or "none"
     end,
     findSensors = function()
