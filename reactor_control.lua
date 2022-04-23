@@ -6,7 +6,7 @@ local progInfo = {
 	version = {-- PUSHED TO MASTER
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 78,
+        build = 79,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -39,6 +39,7 @@ progInfo.help = {
             " * Rewrote/rearranged core code to mitigate input",
             "   lag.",
             " * Updated VOX system to use a remote VOX system.",
+            " * Build 79 fixed crash screen header typo",
             {colors.lightBlue,"Changelong v1.0.3:"},
             " * Changed reactor type string for Advanced",
             "   Peripherals 0.7r (peripheral proxy was removed)",
@@ -954,7 +955,7 @@ crashScreen = function(...)
         term.setBackgroundColor(colors.red)
         paintutils.drawFilledBox(1,0,51,3)
         term.setCursorPos(1,2)
-        cWrite('Reactor Control encoutnered a critical error!')
+        cWrite('Reactor Control encountered a critical error!')
         
         term.setBackgroundColor(colors.black)
         printError('\n\n\n'..err..'\n')
