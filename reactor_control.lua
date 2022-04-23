@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 72,
+        build = 73,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -897,14 +897,14 @@ startup = {
         print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
         sleep(1)
         local pass,result = equipment.findReactor()
-        if equipment.reactor and not args.voxTest then
+        if equipment.reactor then
             print("Found: "..peripheral.getName(equipment.reactor))
-            if result == "mek" then
+            if result == "mek" and not args.voxTest then
                 crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.")
                 equipment.reactor.scram()
                 return
             end
-        else
+        elseif not args.voxTest then
             crashScreen(false,"Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.")
             return
         end
