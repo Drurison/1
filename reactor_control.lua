@@ -6,7 +6,7 @@ local progInfo = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 1,
+        build = 2,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -111,7 +111,7 @@ local program_settings, save_settings, load_settings
 do
     local program_settings_default = {
         vox = {
-            enabled = false
+            enabled = false,
             default_voice = "voice_legacy",
             modem_channel = 39934,
         },
