@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 13,
+        build = 14,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -985,8 +985,8 @@ startup = {
         term.setCursorBlink(true)
         print(program_info.appName .. "\n"..program_info.version.string, "build "..program_info.version.build, "("..program_info.version.date..")\n")
         if args.update then startup.update(args.updateBranch) return end
-        --print("Loading config...")
-        --load_settings()
+        print("Loading config...")
+        load_settings()
         sleep(1)
         local pass,result = equipment.findReactor()
         if equipment.reactor then
