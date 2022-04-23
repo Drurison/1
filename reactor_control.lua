@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a4',
 	    date = 'April 23, 2022',
-        build = 50
+        build = 51
     },
 	files = 
 	{
@@ -579,7 +579,7 @@ systemMonitor = {
             
             else-- event[1] == "r.system_screen" then
                 --systemMonitor.draw_monitor(gui.windows.monitor)
-               -- gui.basic.draw(gui.windows.menu)
+               gui.basic.draw(gui.windows.menu)
             end
             if args.dev then 
                 term.setCursorPos(1,h)
