@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 21,
+        build = 22,
     },
 	files = 
 	{
@@ -206,6 +206,7 @@ gui = {
     end,
     
     run = function()
+        print("HELLO WORLD!")
         sleep(0.25) --if not listen.isKeyActive then error("Key listener not active!",0) end
 
         gui.basic.run()
@@ -229,10 +230,6 @@ gui = {
                 monitorPos = {11,1,w-10,h},
             },
         },
-        setup = function()
-            gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
-            gui.basic.draw(env)
-        end,
         run = function()
             term.clear()
 
