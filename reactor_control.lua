@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 75,
+        build = 76,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1072,6 +1072,8 @@ if args.voxTest then
             name = "Exit",
             enabled = true,
             run = function()
+                term.setCursorPos(1,1)
+                term.clear()
                 dev.write("Rainbow Dash is best pegasus!") dev.sleep(0.25)
                 error()
             end,
