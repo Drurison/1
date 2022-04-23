@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 26,
+        build = 27,
     },
 	files = 
 	{
@@ -221,7 +221,6 @@ gui = {
             },
         },
         draw = function(env)
-            error("HELLO WORLD")
             env.setCursorPos(1,1)
             env.setBackgroundColor(colors.gray)
             env.clear()
@@ -413,11 +412,8 @@ systemMonitor = {
     thread_input = function()
         gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
         while true do
-            local event = os.pullEvent()
-            if event == "r.system_screen" then
-                systemMonitor.draw_monitor()
-            elseif event == "key" then
-                local event = table.pack(os.pullEvent())
+            local event = {os.pullEvent()}
+            if event[1] == "key" then
                 if event[1] == "key" then key_raw = event[2] end
                 if key_raw then
                     if key_raw == keys.f9 and args.debug then error("Error screen test message") end
@@ -437,19 +433,22 @@ systemMonitor = {
                         gui.menus.main[gui.item].run()
                     end
                 end
-                gui.basic.draw(env)
+                gui.basic.draw(gui.windows.menu)
 
                 sleep(0.1)
                 key_raw = nil
                 
-                if args.dev then 
-                    term.setCursorPos(1,h)
-                    term.clearLine() for i=1, #event do dev.write(tostring(event[i])..',') end
-                    if args.dev then
-                        if event[1] == "mouse_click" then term.setCursorPos(event[3],event[4]) printError("X") end
-                        if event[1] == "mouse_drag" then term.setCursorPos(event[3],event[4]) printError("X") end
-                        if event[1] == "mouse_up" then term.setCursorPos(event[3],event[4]) printError("X") end
-                    end
+            
+            elseif event[1] == "r.system_screen" then
+                systemMonitor.draw_monitor()
+            end
+            if args.dev then 
+                term.setCursorPos(1,h)
+                term.clearLine() for i=1, #event do dev.write(tostring(event[i])..',') end
+                if args.dev then
+                    if event[1] == "mouse_click" then term.setCursorPos(event[3],event[4]) printError("X") end
+                    if event[1] == "mouse_drag" then term.setCursorPos(event[3],event[4]) printError("X") end
+                    if event[1] == "mouse_up" then term.setCursorPos(event[3],event[4]) printError("X") end
                 end
             end
         end
