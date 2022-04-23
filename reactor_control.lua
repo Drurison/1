@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 21,
+        build = 22,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -840,8 +840,7 @@ equipment = {
     findReactor = function()
         local ap = peripheral.find("fissionReactor")
         local mk = peripheral.find("fissionReactorLogicAdapter")
-        equipment.reactor = ap or mk
-        return (ap or mk) and true or false, ap and "legacy" or mk and "mek" or "none"
+        return (ap or mk) and true or false, ap and "legacy" or mk and "mek" or "none", ap or mk
     end,
     findSensors = function()
         local attached = peripheral.getNames()
@@ -1006,10 +1005,10 @@ startup = {
         if program_settings.peripherals.reactor and #program_settings.peripherals.reactor>0 then
             equipment.reactor = program_settings.peripherals.reactor
         else
-            local pass,result = equipment.findReactor()
+            local pass,result,perif = equipment.findReactor()
             if pass and result then
-                equipment.reactor = result
-                program_settings = result
+                equipment.reactor = perif
+                program_settings = perif
             end
         end
         dev.verboseRed(peripheral.isPresent(equipment.reactor)) dev.sleep(2)
