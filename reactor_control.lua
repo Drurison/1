@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 63
+        build = 64
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -962,9 +962,9 @@ quit = function()
     error()
 end
 
-function vox.queue(message_name)
-    if not vox_sequences[message_name] then return error("Vox message '"..message_name.."' does not exist.") end
-    local request = vox.generate_message(vox_sequences[message_name])
+function vox.queue(message)
+    --if not vox_sequences[message_name] then return error("Vox message '"..message_name.."' does not exist.") end
+    local request = vox.generate_message(message)
     vox.send_message(request)
 end
 vox_sequences = {
