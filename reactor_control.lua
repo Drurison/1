@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 69
+        build = 70
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -984,7 +984,7 @@ if args.voxTest then
     local menuEntries = {
         {
             name = "-- VOX TEST MODE --",
-            enabled = true,
+            enabled = false,
             run = function()
                 intercom.playSound("aci.vox.voice_legacy.doop")
             end,
@@ -1047,7 +1047,7 @@ if args.voxTest then
         },
         {
             name = "clear queue",
-            enabled = true,
+            enabled = false,
             run = function()
                 vox.playlist = {}
             end,
@@ -1058,6 +1058,14 @@ if args.voxTest then
             run = function()
                 write('Enter sound name> ')
                 intercom.playSound(read())
+            end,
+        },
+        {
+            name = "Play VOX message...",
+            enabled = true,
+            run = function()
+                write('Enter a message> ')
+                vox.send_message(vox.generatemessage(read()))
             end,
         },
         {
