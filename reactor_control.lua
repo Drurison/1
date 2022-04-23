@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 71
+        build = 72,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -897,7 +897,7 @@ startup = {
         print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
         sleep(1)
         local pass,result = equipment.findReactor()
-        if equipment.reactor then
+        if equipment.reactor and not args.voxTest then
             print("Found: "..peripheral.getName(equipment.reactor))
             if result == "mek" then
                 crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.")
@@ -911,7 +911,7 @@ startup = {
         if equipment.radiationSensors then
             print("Found: "..#equipment.radiationSensors.." radiation sensors")
         end
-        if equipment.reactor.getStatus() and not args.voxTest then
+        if equipment.reactor and equipment.reactor.getStatus() then
             equipment.reactor.scram()
             printError("REACTOR IS ACTIVE; SCRAMMING...")
             sleep(1)
