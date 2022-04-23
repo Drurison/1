@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 19,
+        build = 20,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1012,6 +1012,7 @@ startup = {
                 program_settings = result
             end
         end
+        verboseRed(peripheral.isPresent(equipment.reactor)) dev.sleep(2)
         if equipment.reactor and peripheral.isPresent(equipment.reactor) and not args.voxTest  then
             print("Found: "..peripheral.getName(equipment.reactor))
             if result == "mek"then
