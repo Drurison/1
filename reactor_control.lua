@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 12,
+        build = 13,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -903,7 +903,7 @@ startup = {
         local address = "https://gitlab.com/peekofwar-craftos-programs/mekanism-fission-reactor-control/-/raw/"..branch.."/reactor_control.lua"
         local run
         local c = term.getTextColor() term.setTextColor(colors.green)
-        print("Fetching update from branch: "..branch) term.setTextColor(c)
+        print("Fetching update from '"..branch.."' branch:") term.setTextColor(c)
         do
             --[[
                 Program made by Peekofwar
