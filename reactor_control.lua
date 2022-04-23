@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 45,
+        build = 46,
     },
 	files = 
 	{
@@ -803,10 +803,11 @@ startup = {
             if result == "mek" then
                 crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.")
                 equipment.reactor.scram()
-                error(nil,0)
+                return
             end
         else
-            error("Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n",0)
+            crashScreen(false,"Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n")
+            return
         end
         if equipment.radiationSensors then
             print("Found: "..#equipment.radiationSensors.." radiation sensors")
