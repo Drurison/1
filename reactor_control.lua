@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a4',
 	    date = 'April 23, 2022',
-        build = 51
+        build = 52
     },
 	files = 
 	{
@@ -332,6 +332,7 @@ systemMonitor = {
         isDamaged = false,
         isNoFuel = true,
         isNoCoolant= false,
+        isLowCoolant= false,
         isWasteFull = false,
         isSteamFull = false,
         warnFlash = false,
@@ -347,8 +348,9 @@ systemMonitor = {
         wasteFullOffset = 500,
         steamFullOffset = 500,
         tempLimit = 1000,
-        coolantMin = 1,
+        coolantMin = 1000,
         fuelMin = 1,
+        integrityWarn = 100,
     },
     alarms = {
         master = false,
@@ -491,6 +493,13 @@ systemMonitor = {
         if not systemMonitor.alarms.master then
             if systemMonitor.vars.isNoFuel and fuel > 0 then
                 systemMonitor.vars.isNoFuel = false
+            elseif math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isNoFuel = true
+                vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
+            end
+
+            if systemMonitor.vars.isNoFuel and fuel > 0 then
+                systemMonitor.vars.isNoFuel = false
             elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoFuel = true
                 vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
@@ -500,6 +509,13 @@ systemMonitor = {
                 systemMonitor.vars.isNoCoolant = false
             elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoCoolant = true
+                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
+            end
+
+            if systemMonitor.vars.isLowCoolant and coolant > 0 then
+                systemMonitor.vars.isLowCoolant = false
+            elseif coolant < systemMonitor.warnConfig.coolantMin and (status or systemMonitor.vars.forceCheck) then
+                systemMonitor.vars.isLowCoolant = true
                 vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
@@ -658,7 +674,7 @@ systemMonitor = {
                     env.setTextColor(colors.white)
                     barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.lightBlue,colors.gray,env)
                 end
-                if systemMonitor.vars.isNoCoolant and systemMonitor.vars.warnFlash then
+                if (systemMonitor.vars.isNoCoolant or systemMonitor.vars.isLowCoolant) and systemMonitor.vars.warnFlash then
                     env.setTextColor(colors.red)
                     barMeter(w/2+1,6,w/2-1,coolant,coolant_cap,"Coolant: ",math.floor(coolant).."mB",colors.red,colors.gray,env)
                 else
