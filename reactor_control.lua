@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 36,
+        build = 37,
     },
 	files = 
 	{
@@ -360,7 +360,7 @@ systemMonitor = {
         if args.voxTest then return end
         os.queueEvent("r.system_screen")
         while true do
-            while not peripheral.isPresent(peripheral.getName(equipment.reactor)) do
+            while not peripheral.isPresent(peripheral.getName(equipment.reactor)) or systemMonitor.alarms.master do
                 systemMonitor.alarms.master = true
                 systemMonitor.alarms.disconnected = true
                 term.redirect(gui.windows.monitor)
