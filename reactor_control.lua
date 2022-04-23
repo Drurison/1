@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 58
+        build = 59
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -104,7 +104,7 @@ progInfo.help = {
         error()
     end,
 }
------- Program User Config
+--[[ Program User Config
 local program_settings, save_settings, load_settings
 do
     local program_settings_default = {
@@ -112,6 +112,7 @@ do
             default_voice = "voice_legacy",
             modem_channel = 39934,
         },
+        reactor_ID = nil
         alarm_coolantMin = 10000,
         alarm_integrityMin = 100,
     }
@@ -164,7 +165,7 @@ do
         end
     end
 end
-------
+--]]
 function math.clamp(vMin,vMax,x)
 	return math.max(math.min(x,vMax),vMin)
 end
@@ -417,7 +418,7 @@ systemMonitor = {
         wasteFullOffset = 500,
         steamFullOffset = 500,
         tempLimit = 1000,
-        coolantMin = 1000,
+        coolantMin = 10000,
         fuelMin = 1,
         integrityWarn = 100,
     },
