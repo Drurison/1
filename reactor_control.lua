@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 60
+        build = 61
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -962,207 +962,20 @@ quit = function()
     error()
 end
 
+function vox.queue(message_name)
+    if not vox_sequences[message_name] then return error("Vox message '"..message_name.."' does not exist.") end
+    local request = vox.generate_message(vox_sequences[message_name])
+    vox.send_message(request)
+end
 vox_sequences = {
-	reactorActivated = {
-		{
-			sound = "aci.vox.voice_legacy.deeoo",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.fission",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.reactor",
-			length = 0.85,
-		},
-		{
-			sound = "aci.vox.voice_legacy.activated",
-			length = 1,
-		},
-	},
-	reactorDeactivated = {
-		{
-			sound = "aci.vox.voice_legacy.deeoo",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.fission",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.reactor",
-			length = 0.85,
-		},
-		{
-			sound = "aci.vox.voice_legacy.deactivated",
-			length = 1,
-		},
-	},
-	overflowWaste = {
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.4,
-		},
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.warning",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.waste",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.overflow",
-			length = 1,
-		},
-	},
-	overflowSteam = {
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.4,
-		},
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.warning",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.steam",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.overflow",
-			length = 1,
-		},
-	},
-	noFuel = {
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.4,
-		},
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.warning",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.malfunction",
-			length = 1.25,
-		},
-		{
-			sound = "aci.vox.voice_legacy.fuel",
-			length = 0.6,
-		},
-		{
-			sound = "aci.vox.voice_legacy.depleted",
-			length = 1,
-		},
-	},
-	noCoolant = {
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.4,
-		},
-		{
-			sound = "aci.vox.voice_legacy.buzwarn",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.warning",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.malfunction",
-			length = 1.25,
-		},
-		{
-			sound = "aci.vox.voice_legacy.insufficient",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.coolant",
-			length = 1,
-		},
-	},
-	highTemp = {
-		{
-			sound = "aci.vox.voice_legacy.woop",
-			length = 0.5,
-		},
-		{
-			sound = "aci.vox.voice_legacy.woop",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.warning",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.high",
-			length = 0.5,
-		},
-		{
-			sound = "aci.vox.voice_legacy.reactor",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.temperature",
-			length = 1,
-		},
-	},
-	manualIllAdvised = {
-		{
-			sound = "aci.vox.voice_legacy.woop",
-			length = 0.5,
-		},
-		{
-			sound = "aci.vox.voice_legacy.woop",
-			length = 0.75,
-		},
-		{
-			sound = "aci.vox.voice_legacy.warning",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.activation",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.ill",
-			length = 0.4,
-		},
-		{
-			sound = "aci.vox.voice_legacy.advised",
-			length = 1,
-		},
-		{
-			sound = "aci.vox.voice_legacy.check",
-			length = 0.4,
-		},
-		{
-			sound = "aci.vox.voice_legacy.terminal",
-			length = 0.6,
-		},
-		{
-			sound = "aci.vox.voice_legacy.for",
-			length = 0.5,
-		},  
-		{
-			sound = "aci.vox.voice_legacy.status",
-			length = 1,
-		},
-	},
+	["reactorActivated"] = "deeuu: Fission reactor, activated.",
+    ["reactorDeactivated"] = "deeuu: Fission reactor, deactivated.",
+    ["overflowWaste"] = "bizwarn bizwarn: Warning: Waste overflow!",
+    ["overflowSteam"] = "bizwarn bizwarn: Warning: Steam overflow!",
+    ["noFuel"] = "buzwarn buzwarn: Warning: Fissil fuel depleted.",
+    ["noCoolant"] = "bizwarn bizwarn: Warning: Insufficient reactor coolant!",
+    ["highTemp"] = "bizwarn bizwarn: Warning: Reactor temperature critical!",
+    ["manualIllAdvised"] = "deeuu: Warning: Reactor activation is ill advised. Please check control terminal.",
 }
 
 if args.voxTest then
