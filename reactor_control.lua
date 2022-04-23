@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a3',
 	    date = 'April 22, 2022',
-        build = 34,
+        build = 35,
     },
 	files = 
 	{
@@ -540,6 +540,7 @@ systemMonitor = {
     thread_input = function()
         gui.windows.menu = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.menuPos))
         gui.windows.monitor = window.create(gui.rootTerminal,table.unpack(gui.basic.config.windows.monitorPos))
+        gui.basic.draw(gui.windows.menu)
         while true do
             local event = {os.pullEvent()}
             if event[1] == "key" then
