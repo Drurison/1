@@ -6,7 +6,7 @@ local progInfo = {
 	version = {
         string = '1.1.0a5',
 	    date = 'April 23, 2022',
-        build = 74,
+        build = 75,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -922,7 +922,7 @@ startup = {
         
         local pass, err = pcall(startup.run)
         crashScreen(pass, err)
-        if equipment.reactor.getStatus() then
+        if equipment.reactor and equipment.reactor.getStatus() then
             equipment.reactor.scram()
             printError("\nREACTOR IS ACTIVE; SCRAMMING...")
             sleep(1)
