@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 34,
+        build = 35,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1020,7 +1020,7 @@ startup = {
             equipment.reactor = peripheral.wrap(perif)
             program_settings = peripheral.wrap(perif)
         end
-        if equipment.reactor and peripheral.isPresent(peripheral.getName(equipment.reactor)) and not args.voxTest then
+        if pass and not args.voxTest then
             print("Found: "..peripheral.getName(equipment.reactor))
             if result == "mek"then
                 crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.\n\nRun '"..shell.getRunningProgram().." /update' to fetch the latest version.")
