@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 32,
+        build = 33,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -840,7 +840,11 @@ equipment = {
     findReactor = function()
         local name
         if program_settings.peripherals.reactor then
+            dev.verboseRed("Config")
             name = program_settings.peripherals.reactor
+        else
+            dev.verboseRed("Search")
+            
         end
         dev.verbose(name)
         local type = peripheral.getType(name)
