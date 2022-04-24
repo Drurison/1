@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 42,
+        build = 43,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -31,7 +31,7 @@ program_info.help = {
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
             " /update [branch] - Updates to the specified branch",
-            "  (defaults to 'master' if none is specified).",
+            "  (defaults to 'master' if nothing is specified).",
             "",
         -- "|                                                    |"
             {colors.lightBlue,"Changelong v1.2.0:"},
