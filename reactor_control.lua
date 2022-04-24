@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 41,
+        build = 42,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -108,6 +108,7 @@ program_info.help = {
             elseif key == keys.enter or key == keys.numPadEnter then break end
         end
         term.clear()
+        term.setCursorPos(1,1)
         error()
     end,
 }
