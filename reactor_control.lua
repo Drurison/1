@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 30,
+        build = 31,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -838,17 +838,17 @@ equipment = {
     reactor = peripheral.find("fissionReactor"),
     radiationSensors = {},
     findReactor = function()
-        local ap, mk
+        local name
         if program_settings.peripherals.reactor then
-            local type = peripheral.getType(program_settings.peripherals.reactor)
-            if type == "fissionReactor" then ap = peripheral.wrap(program_settings.peripherals.reactor) dev.verbose("F: LEGACY")
-            elseif type == "fissionReactorLogicAdapter" then mk = peripheral.wrap(program_settings.peripherals.reactor) dev.verbose("F: MEK") end
-        else
-            dev.verbose("F - AUTO")
-            ap = peripheral.find("fissionReactor")
-            mk = peripheral.find("fissionReactorLogicAdapter")
+            name = program_settings.peripherals.reactor
         end
-        return (ap or mk) and true or false, ap and "legacy" or mk and "mek" or "none", ap or mk
+        dev.verbose(name)
+        local type = peripheral.getType(name)
+        dev.verbose(type)
+        if type == fissionReactor then type = "legacy"
+        elseif type == "fissionReactorLogicAdapter" then type = "mek"
+        else type = "none" end dev.verboseRed(type)
+    return peripheral.isPresent(name),type,name
     end,
     findSensors = function()
         local attached = peripheral.getNames()
@@ -1012,10 +1012,10 @@ startup = {
         
         local pass,result,perif = equipment.findReactor()
         if pass and result then
-            equipment.reactor = perif
-            program_settings = perif
+            equipment.reactor = peripheral.wrap(perif)
+            program_settings = peripheral.wrap(perif)
         end
-        dev.verboseRed(pass) dev.verboseRed(result) dev.verboseRed(tostring(perif)) dev.sleep(2)
+        dev.sleep(2)
         if equipment.reactor and peripheral.isPresent(peripheral.getName(equipment.reactor)) and not args.voxTest then
             print("Found: "..peripheral.getName(equipment.reactor))
             if result == "mek"then
