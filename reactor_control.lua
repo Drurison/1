@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 31,
+        build = 32,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -845,7 +845,7 @@ equipment = {
         dev.verbose(name)
         local type = peripheral.getType(name)
         dev.verbose(type)
-        if type == fissionReactor then type = "legacy"
+        if type == "fissionReactor" then type = "legacy"
         elseif type == "fissionReactorLogicAdapter" then type = "mek"
         else type = "none" end dev.verboseRed(type)
     return peripheral.isPresent(name),type,name
