@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 35,
+        build = 36,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1014,6 +1014,7 @@ startup = {
         if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"]) end) sleep(1) end
         sleep(1)
         
+        dev.sleep(2)
         local pass,result,perif = equipment.findReactor()
         dev.verbose(pass) dev.verbose(result) dev.verbose(tostring(perif))
         if pass and result then
@@ -1040,7 +1041,7 @@ startup = {
             pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
             sleep(1)
         end
-        dev.sleep(2)
+        dev.sleep(0.75)
         print("Starting GUI...")
         sleep(0.5)
         term.setCursorBlink(false)
