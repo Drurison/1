@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 28,
+        build = 29,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -841,8 +841,8 @@ equipment = {
         local ap, mk
         if program_settings.peripherals.reactor then
             local type = peripheral.getType(program_settings.peripherals.reactor)
-            ap = type == "fissionReactor" and program_settings.peripherals.reactor or nil
-            mk = type == "fissionReactorLogicAdapter" and program_settings.peripherals.reactor or nil
+            if type == "fissionReactor" then ap = peripheral.wrap(program_settings.peripherals.reactor)
+            elseif type == "fissionReactorLogicAdapter" then mk = peripheral.wrap(program_settings.peripherals.reactor) end
         else
             ap = peripheral.find("fissionReactor")
             mk = peripheral.find("fissionReactorLogicAdapter")
