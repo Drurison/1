@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 40,
+        build = 41,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -30,8 +30,13 @@ program_info.help = {
             " /verbose - Triggers additional debug messages",
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
+            " /update [branch] - Updates to the specified branch",
+            "  (defaults to 'master' if none is specified).",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.2.0:"},
+            " + Added user config file.",
+            " + Added update script (see switches above).",
             {colors.lightBlue,"Changelong v1.1.0:"},
             " + Added reactor disconnect alarm state and message",
             "   (no longer a program stop-error).",
