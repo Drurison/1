@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a1',
 	    date = 'April 23, 2022',
-        build = 37,
+        build = 38,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -839,7 +839,7 @@ equipment = {
     radiationSensors = {},
     findReactor = function()
         local name
-        if program_settings.peripherals.reactor then
+        if program_settings.peripherals.reactor and type(program_settings.peripherals.reactor) == "string" and #program_settings.peripherals.reactor>0 then
             dev.verboseRed("Config")
             name = program_settings.peripherals.reactor
         else
@@ -943,10 +943,6 @@ startup = {
                 wget https://gitlab.com/peekofwar-craftos-programs/misc/-/raw/main/wgetReplacement.lua
                 pastebin get EYwhWkvd wgetReplacement.lua
             ]]
-            local function printUsage()
-                print("Usage: \n"..shell.getRunningProgram().." <url> [filename]")
-                print(shell.getRunningProgram().." run <url>")
-            end
             local arguments = { address, shell.getRunningProgram()}
             local function promptOverwrite()
                 printError("File already exists.")
@@ -996,9 +992,6 @@ startup = {
                         print("File saved as '"..destination.."'.")
                     end
                 end
-            end
-            if #arguments < 1 then
-                printUsage()
             end
             if #arguments > 0 then
                 run()
