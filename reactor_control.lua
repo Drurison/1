@@ -4,9 +4,9 @@ local program_info = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {-- PUSHED TO MASTER
-        string = '1.2.0a1',
-	    date = 'April 23, 2022',
-        build = 43,
+        string = '1.2.0a2',
+	    date = 'April 25, 2022',
+        build = 44,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1035,7 +1035,7 @@ startup = {
         if equipment.radiationSensors then
             print("Found: "..#equipment.radiationSensors.." radiation sensors")
         end
-        if equipment.reactor and equipment.reactor.getStatus() then
+        if equipment.reactor and equipment.reactor.getStatus() and program_settings.startup.scram_active then
             equipment.reactor.scram()
             printError("REACTOR IS ACTIVE; SCRAMMING...")
             pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
