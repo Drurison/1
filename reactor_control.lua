@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 44,
+        build = 45,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1018,7 +1018,6 @@ startup = {
         dev.verbose(pass) dev.verbose(result) dev.verbose(tostring(perif))
         if pass and result then
             equipment.reactor = peripheral.wrap(perif)
-            program_settings = peripheral.wrap(perif)
         end
         dev.sleep(2)
         if pass and not args.voxTest then
