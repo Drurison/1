@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 67,
+        build = 68,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -626,7 +626,7 @@ systemMonitor = {
                 vox.queue(program_settings.vox.sequences["noCoolant"]) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
-            if systemMonitor.vars.isLowCoolant and coolant > 0 then
+            if systemMonitor.vars.isLowCoolant and coolant >= systemMonitor.warnConfig.coolantMin then
                 systemMonitor.vars.isLowCoolant = false
             elseif coolant < systemMonitor.warnConfig.coolantMin and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isLowCoolant = true
