@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 56,
+        build = 57,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1075,6 +1075,16 @@ startup = {
         parallel.waitForAll(listen.fallbackTerminate,systemMonitor.thread_main,systemMonitor.thread_input,systemMonitor.thread_monitor)
     end,
 }
+local function printWait()
+    term.setTextColor(getColor(5))
+    write("Press any key to continue or F1 to cancel...")    local event, key, is_held = os.pullEvent('key')
+    term.clearLine()
+    if key == keys.f1 then
+        local x,y = term.getCursorPos()
+        term.setCursorPos(1,y)
+        error()
+    end
+end
 local __termOrig = term.current()
 crashScreen = function(...)
     term.redirect(__termOrig)
@@ -1102,17 +1112,6 @@ quit = function()
     term.setCursorPos(1,1)
     term.clear()
     error()
-end
-
-local function printWait()
-    term.setTextColor(getColor(5))
-    write("Press any key to continue or F1 to cancel...")    local event, key, is_held = os.pullEvent('key')
-    term.clearLine()
-    if key == keys.f1 then
-        local x,y = term.getCursorPos()
-        term.setCursorPos(1,y)
-        error()
-    end
 end
 
 function vox.queue(message)
