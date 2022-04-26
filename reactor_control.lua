@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 54,
+        build = 55,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -864,6 +864,7 @@ equipment = {
             local perif = peripheral.find("fissionReactor") or peripheral.find("fissionReactorLogicAdapter")
             name = perif and peripheral.getName(perif)
         end
+        if not name then return nil, "none" end
         dev.verbose(name)
         local type = peripheral.getType(name)
         dev.verbose(type)
