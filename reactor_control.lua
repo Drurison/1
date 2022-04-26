@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 58,
+        build = 59,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1076,18 +1076,17 @@ startup = {
     end,
 }
 local function printWait()
-
     local function getColor(color)
         return 2^(color-1)
     end
+    local x,y=term.getCursorPos()
+    local w,h=term.getSize()
+    term.setCursorPos(1,h)
     term.setTextColor(getColor(5))
-    write("Press any key to continue or F1 to cancel...")    local event, key, is_held = os.pullEvent('key')
-    term.clearLine()
-    if key == keys.f1 then
-        local x,y = term.getCursorPos()
-        term.setCursorPos(1,y)
-        error()
-    end
+    write("Press any key to continue...")    local event, key, is_held = os.pullEvent('key')
+    term.clearLine())
+    term.setCursorPos(x,y)
+    return
 end
 local __termOrig = term.current()
 crashScreen = function(...)
