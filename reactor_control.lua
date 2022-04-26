@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 60,
+        build = 61,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1082,7 +1082,7 @@ local function printWait()
     local x,y=term.getCursorPos()
     local w,h=term.getSize()
     term.setCursorPos(1,h)
-    term.setTextColor(getColor(5)
+    term.setTextColor(getColor(5))
     write("Press any key to continue...")
     local event, key, is_held = os.pullEvent('key')
     term.clearLine()
