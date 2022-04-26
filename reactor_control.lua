@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 55,
+        build = 56,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1093,6 +1093,8 @@ crashScreen = function(...)
         
         term.setBackgroundColor(colors.black)
         printError('\n\n\n'..err..'\n')
+
+        if lOS then printWait() end
     end
 end
 quit = function()
@@ -1100,6 +1102,17 @@ quit = function()
     term.setCursorPos(1,1)
     term.clear()
     error()
+end
+
+local function printWait()
+    term.setTextColor(getColor(5))
+    write("Press any key to continue or F1 to cancel...")    local event, key, is_held = os.pullEvent('key')
+    term.clearLine()
+    if key == keys.f1 then
+        local x,y = term.getCursorPos()
+        term.setCursorPos(1,y)
+        error()
+    end
 end
 
 function vox.queue(message)
