@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 50,
+        build = 51,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -358,7 +358,7 @@ gui = {
         main = {
             {
                 name = "Activate",
-                enabled = true,
+                enabled = false,
                 run = function()
                     equipment.reactor.activate()
                     --vox.queue(vox_sequences.reactorActivated)
