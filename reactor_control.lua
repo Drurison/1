@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 57,
+        build = 58,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1076,6 +1076,10 @@ startup = {
     end,
 }
 local function printWait()
+
+    local function getColor(color)
+        return 2^(color-1)
+    end
     term.setTextColor(getColor(5))
     write("Press any key to continue or F1 to cancel...")    local event, key, is_held = os.pullEvent('key')
     term.clearLine()
