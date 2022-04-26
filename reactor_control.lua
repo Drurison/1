@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 61,
+        build = 62,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -133,14 +133,14 @@ do
             },
         },
         peripherals = {
-            reactor = nil,
+            reactor = "",
             radiation_sensors = {},
         },
         startup = {
             scram_active = true,
         },
         alarm = {
-            coolant_min = 50,
+            coolant_min_mB = 10000,
             integrity_min = 100,
         },
     }
@@ -453,6 +453,7 @@ systemMonitor = {
             if peripheral.isPresent(peripheral.getName(equipment.reactor)) then
                 systemMonitor.warnConfig.wasteFullOffset = equipment.reactor.getWasteCapacity() - systemMonitor.warnConfig.wasteFullOffset
                 systemMonitor.warnConfig.steamFullOffset = equipment.reactor.getHeatedCoolantCapacity() - systemMonitor.warnConfig.steamFullOffset
+                systemMonitor.warnConfig.coolantMin = program_settings.alarms.coolant_min_mB or systemMonitor.warnConfig.coolantMin
             end
         end,
         wasteFullOffset = 500,
@@ -651,7 +652,7 @@ systemMonitor = {
                 vox.queue(program_settings.vox.sequences["highTemp"]) dev.pos(11,1) dev.write('VOX highTemp')
             end
         end
-
+ 
         if waste == waste_cap then
             systemMonitor.alarms.radiation = true
         end
