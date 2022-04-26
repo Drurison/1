@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 63,
+        build = 64,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -450,6 +450,7 @@ systemMonitor = {
     data = {},
     warnConfig = {
         setup = function()
+        error("TEST")
             if peripheral.isPresent(peripheral.getName(equipment.reactor)) then
                 systemMonitor.warnConfig.wasteFullOffset = equipment.reactor.getWasteCapacity() - systemMonitor.warnConfig.wasteFullOffset
                 systemMonitor.warnConfig.steamFullOffset = equipment.reactor.getHeatedCoolantCapacity() - systemMonitor.warnConfig.steamFullOffset
