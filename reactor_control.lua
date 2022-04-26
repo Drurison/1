@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 53,
+        build = 54,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -882,7 +882,7 @@ equipment = {
         if #equipment.radiationSensors > 0 then return true else radiationSensors = nil end
     end,
 }
-equipment.findSensors()
+--equipment.findSensors()
 intercom = {
 	list = {},
 	findAll = function()
