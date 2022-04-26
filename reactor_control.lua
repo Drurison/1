@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 47,
+        build = 48,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1102,6 +1102,7 @@ quit = function()
 end
 
 function vox.queue(message)
+    if not program_setitngs.vox.enabled then return false end
     --if not vox_sequences[message_name] then return error("Vox message '"..message_name.."' does not exist.") end
     local request = vox.generate_message(message)
     return vox.send_message(request)
