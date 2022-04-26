@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 52,
+        build = 53,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -358,7 +358,7 @@ gui = {
         main = {
             {
                 name = "Activate",
-                enabled = false,
+                enabled = true,
                 run = function()
                     equipment.reactor.activate()
                     --vox.queue(vox_sequences.reactorActivated)
@@ -397,7 +397,7 @@ gui = {
                     vox.playlist = {}
                     for i=1, #gui.menus.main do
                         if gui.menus.main[i].name == "Activate" then
-                            gui.menus.main[i].enabled = false
+                            gui.menus.main[i].enabled = true
                         elseif gui.menus.main[i].name == "Scram" then
                             gui.menus.main[i].enabled = false
                         elseif gui.menus.main[i].name == "Reset" then
