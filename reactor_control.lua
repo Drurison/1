@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 45,
+        build = 46,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -120,6 +120,17 @@ do
             enabled = false,
             default_voice = "voice_legacy",
             modem_channel = 39934,
+            sequences = {
+                ["reactorActivated"] = "deeuu: Fission reactor activated.",
+                ["reactorDeactivated"] = "deeuu: Fission reactor deactivated.",
+                ["overflowWaste"] = "bizwarn bizwarn: Warning: Waste overflow!",
+                ["overflowSteam"] = "bizwarn bizwarn: Warning: Steam overflow!",
+                ["noFuel"] = "buzwarn buzwarn: Warning: Fissil fuel depleted.",
+                ["noCoolant"] = "bizwarn bizwarn: Warning: Insufficient reactor coolant!",
+                ["highTemp"] = "bizwarn bizwarn: Warning: Reactor temperature critical!",
+                ["manualIllAdvised"] = "deeuu: Warning: Reactor activation is ill advised. Please check control terminal.",
+                ["configCorrupt"] = "deeuu: Warning: Reactor config corrupted. deeoo: Check terminal configuration.",
+            },
         },
         peripherals = {
             reactor = nil,
@@ -412,7 +423,7 @@ gui = {
                 run = function()
                     if equipment.reactor.getStatus() then
                         printError('REACTOR IS ACTIVE; SCRAMMING...')
-                        pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
+                        pcall(function()vox.queue(program_settings.vox.sequences["reactorDeactivated"]) end)
                         equipment.reactor.scram()
                     end
                     dev.write("Rainbow Dash is best pegasus!") dev.sleep(0.25)
@@ -546,7 +557,7 @@ systemMonitor = {
                 
                 if systemMonitor.data.status then
                     equipment.reactor.scram()
-                    vox.queue(vox_sequences.manualIllAdvised)
+                    vox.queue(program_settings.vox.sequences["manualIllAdvised"])
                 end
             end
             --error("Program under heavy rewrite...",0)
@@ -574,7 +585,7 @@ systemMonitor = {
                     end
                 end
                 --os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorDeactivated)
+                vox.queue(program_settings.vox.sequences["reactorDeactivated"])
                 systemMonitor.vars.isActive = false
             elseif not systemMonitor.vars.isActive and status then
                 for i=1, #gui.menus.main do
@@ -586,7 +597,7 @@ systemMonitor = {
                     end
                 end
                 --os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorActivated)
+                vox.queue(program_settings.vox.sequences["reactorActivated"])
                 systemMonitor.vars.isActive = true
             end
         end
@@ -602,42 +613,42 @@ systemMonitor = {
                 systemMonitor.vars.isNoFuel = false
             elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoFuel = true
-                vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
+                vox.queue(program_settings.vox.sequences["noFuel"]) dev.pos(11,1) dev.write('VOX noFuel')
             end
 
             if systemMonitor.vars.isNoCoolant and coolant > 0 then
                 systemMonitor.vars.isNoCoolant = false
             elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoCoolant = true
-                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
+                vox.queue(program_settings.vox.sequences["noCoolant"]) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
             if systemMonitor.vars.isLowCoolant and coolant > 0 then
                 systemMonitor.vars.isLowCoolant = false
             elseif coolant < systemMonitor.warnConfig.coolantMin and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isLowCoolant = true
-                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
+                vox.queue(program_settings.vox.sequences["noCoolant"]) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
             if systemMonitor.vars.isSteamFull and steam < steam_cap-500 then
                 systemMonitor.vars.isSteamFull = false
             elseif steam >= steam_cap-500 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isSteamFull = true
-                vox.queue(vox_sequences.overflowSteam) dev.pos(11,1) dev.write('VOX overflowSteam')
+                vox.queue(program_settings.vox.sequences["overflowSteam"]) dev.pos(11,1) dev.write('VOX overflowSteam')
             end
 
             if systemMonitor.vars.isWasteFull and waste < waste_cap-500 then
                 systemMonitor.vars.isWasteFull = false
             elseif waste >= waste_cap-500 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isWasteFull = true
-                vox.queue(vox_sequences.overflowWaste) dev.pos(11,1) dev.write('VOX overflowWaste')
+                vox.queue(program_settings.vox.sequences["overflowWaste"]) dev.pos(11,1) dev.write('VOX overflowWaste')
             end
 
             if systemMonitor.vars.isTempCritical and temp < 1000 then
                 systemMonitor.vars.isTempCritical = false
             elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isTempCritical = true
-                vox.queue(vox_sequences.highTemp) dev.pos(11,1) dev.write('VOX highTemp')
+                vox.queue(program_settings.vox.sequences["highTemp"]) dev.pos(11,1) dev.write('VOX highTemp')
             end
         end
 
@@ -1011,7 +1022,7 @@ startup = {
         if args.update then startup.update(args.updateBranch) return end
         print("Loading config...")
         local state = load_settings()
-        if state == "corrupt" then pcall(function() vox.queue(vox_sequences["configCorrupt"]) end) sleep(1) end
+        if state == "corrupt" then pcall(function() vox.queue(program_settings.vox.sequences["configCorrupt"]) end) sleep(1) end
         sleep(1)
         
         local pass,result,perif = equipment.findReactor()
@@ -1037,7 +1048,7 @@ startup = {
         if equipment.reactor and equipment.reactor.getStatus() and program_settings.startup.scram_active then
             equipment.reactor.scram()
             printError("REACTOR IS ACTIVE; SCRAMMING...")
-            pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
+            pcall(function()vox.queue(program_settings.vox.sequences["reactorDeactivated"]) end)
             sleep(1)
         end
         dev.sleep(0.75)
@@ -1050,7 +1061,7 @@ startup = {
         if equipment.reactor and equipment.reactor.getStatus() then
             equipment.reactor.scram()
             printError("\nREACTOR IS ACTIVE; SCRAMMING...")
-            pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
+            pcall(function()vox.queue(program_settings.vox.sequences["reactorDeactivated"]) end)
             sleep(1)
             --quit()
         end
@@ -1094,7 +1105,7 @@ function vox.queue(message)
     --if not vox_sequences[message_name] then return error("Vox message '"..message_name.."' does not exist.") end
     local request = vox.generate_message(message)
     return vox.send_message(request)
-end
+end--[[
 vox_sequences = {
 	["reactorActivated"] = "deeuu: Fission reactor activated.",
     ["reactorDeactivated"] = "deeuu: Fission reactor deactivated.",
@@ -1105,7 +1116,7 @@ vox_sequences = {
     ["highTemp"] = "bizwarn bizwarn: Warning: Reactor temperature critical!",
     ["manualIllAdvised"] = "deeuu: Warning: Reactor activation is ill advised. Please check control terminal.",
     ["configCorrupt"] = "deeuu: Warning: Reactor config corrupted. deeoo: Check terminal configuration.",
-}
+}]]
 
 if args.voxTest then
     local menuEntries = {
@@ -1120,63 +1131,63 @@ if args.voxTest then
             name = "test vox reactorActivated",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.reactorActivated)
+                vox.queue(program_settings.vox.sequences["reactorActivated"])
             end,
         },
         {
             name = "test vox reactorDeactivated",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.reactorDeactivated)
+                vox.queue(program_settings.vox.sequences["reactorDeactivated"])
             end,
         },
         {
             name = "test vox overflowWaste",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.overflowWaste)
+                vox.queue(program_settings.vox.sequences["overflowWaste"])
             end,
         },
         {
             name = "test vox overflowSteam",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.overflowSteam)
+                vox.queue(program_settings.vox.sequences["overflowSteam"])
             end,
         },
         {
             name = "test vox noFuel",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.noFuel)
+                vox.queue(program_settings.vox.sequences["noFuel"])
             end,
         },
         {
             name = "test vox noCoolant",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.noCoolant)
+                vox.queue(program_settings.vox.sequences["noCoolant"])
             end,
         },
         {
             name = "test vox highTemp",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.highTemp)
+                vox.queue(program_settings.vox.sequences["highTemp"])
             end,
         },
         {
             name = "test vox manualIllAdvised",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.manualIllAdvised)
+                vox.queue(program_settings.vox.sequences["manualIllAdvised"])
             end,
         },
         {
             name = "test vox configCorrupt",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.configCorrupt)
+                vox.queue(program_settings.vox.sequences["configCorrupt"])
             end,
         },
         {
