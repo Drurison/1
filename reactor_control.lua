@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 62,
+        build = 63,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -453,15 +453,16 @@ systemMonitor = {
             if peripheral.isPresent(peripheral.getName(equipment.reactor)) then
                 systemMonitor.warnConfig.wasteFullOffset = equipment.reactor.getWasteCapacity() - systemMonitor.warnConfig.wasteFullOffset
                 systemMonitor.warnConfig.steamFullOffset = equipment.reactor.getHeatedCoolantCapacity() - systemMonitor.warnConfig.steamFullOffset
-                systemMonitor.warnConfig.coolantMin = program_settings.alarms.coolant_min_mB or systemMonitor.warnConfig.coolantMin
+                systemMonitor.warnConfig.coolantMin = program_settings.alarms.integrity_min
+                systemMonitor.warnConfig.integrityWarn = program_settings.alarms.coolant_min_mB
             end
         end,
         wasteFullOffset = 500,
         steamFullOffset = 500,
         tempLimit = 1000,
-        coolantMin = 10000,
+        --coolantMin = 10000,
         fuelMin = 1,
-        integrityWarn = 100,
+        --integrityWarn = 100,
     },
     alarms = {
         master = false,
