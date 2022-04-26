@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a2',
 	    date = 'April 25, 2022',
-        build = 70,
+        build = 71,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -664,12 +664,11 @@ systemMonitor = {
         elseif systemMonitor.alarms.radiation_CoolDown > 0 then
             systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
         end
-
-        if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn or coolant < systemMonitor.warnConfig.coolantMin) then
-            equipment.reactor.scram()
-        end
-        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn) then
+        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn or coolant < systemMonitor.warnConfig.coolantMin) then
             systemMonitor.alarms.master = true
+        end
+        if status and systemMonitor.alarms.master then
+            equipment.reactor.scram()
         end
         --  600 K moderate
         -- 1000 K high
