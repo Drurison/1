@@ -1,12 +1,12 @@
-local progInfo = {
+local program_info = {
 	path = shell.getRunningProgram(),
 	extension = shell.getRunningProgram():match("[^%.]*$"),
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
-	version = {
-        string = '1.1.0',
-	    date = 'April 23, 2022',
-        build = 79,
+	version = {-- PUSHED TO MASTER
+        string = '1.2.0a3',
+	    date = 'August 8, 2022',
+        build = 77,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -14,15 +14,15 @@ local progInfo = {
 	},
 }
 
-progInfo.help = {
+program_info.help = {
     display = function()
         term.setCursorPos(1,1) term.clear()
         local w, h = term.getSize()
         local helpScreen = window.create(term.current(),1,1,w,h-1)
         local sw, sh = helpScreen.getSize()
         local lines = {
-            {colors.yellow,progInfo.appName},
-            "v"..progInfo.version.string.." build "..progInfo.version.build.." ("..progInfo.version.date..")",
+            {colors.yellow,program_info.appName},
+            "v"..program_info.version.string.." build "..program_info.version.build.." ("..program_info.version.date..")",
             "",
             {colors.lightBlue,"Switches:"},
             " /dev   - Activates dev functions",
@@ -30,8 +30,13 @@ progInfo.help = {
             " /verbose - Triggers additional debug messages",
             " /voxtest - Opens the VOX test menu",
             " /test - Triggers temporary tests (if any)",
+            " /update [branch] - Updates to the specified branch",
+            "  (defaults to 'master' if nothing is specified).",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.2.0:"},
+            " + Added user config file.",
+            " + Added update script (see switches above).",
             {colors.lightBlue,"Changelong v1.1.0:"},
             " + Added reactor disconnect alarm state and message",
             "   (no longer a program stop-error).",
@@ -103,35 +108,55 @@ progInfo.help = {
             elseif key == keys.enter or key == keys.numPadEnter then break end
         end
         term.clear()
+        term.setCursorPos(1,1)
         error()
     end,
 }
---[[ Program User Config
+-- Program User Config
 local program_settings, save_settings, load_settings
 do
     local program_settings_default = {
         vox = {
+            enabled = false,
             default_voice = "voice_legacy",
             modem_channel = 39934,
+            sequences = {
+                ["reactorActivated"] = "deeuu: Fission reactor activated.",
+                ["reactorDeactivated"] = "deeuu: Fission reactor deactivated.",
+                ["overflowWaste"] = "bizwarn bizwarn: Warning: Waste overflow!",
+                ["overflowSteam"] = "bizwarn bizwarn: Warning: Steam overflow!",
+                ["noFuel"] = "buzwarn buzwarn: Warning: Fissil fuel depleted.",
+                ["noCoolant"] = "bizwarn bizwarn: Warning: Insufficient reactor coolant!",
+                ["highTemp"] = "bizwarn bizwarn: Warning: Reactor temperature critical!",
+                ["manualIllAdvised"] = "deeuu: Warning: Reactor activation is ill advised. Please check control terminal.",
+                ["configCorrupt"] = "deeuu: Warning: Reactor config corrupted. deeoo: Check terminal configuration.",
+            },
         },
-        reactor_ID = nil,
-        startup_scramActive,
-        alarm_coolantMin = 10000,
-        alarm_integrityMin = 100,
+        peripherals = {
+            reactor = "",
+            radiation_sensors = {},
+        },
+        startup = {
+            scram_active = true,
+        },
+        alarm = {
+            coolant_min_mB = 10000,
+            integrity_min = 100,
+        },
     }
     local function deepCopy(tab)
-        --printError("-Function start")
+        dev.verboseRed("-Function start")
         local a = {}
         for k, v in pairs(tab) do
             if type(v) == "table" then
-                --print("Key: "..k.." = ".."( table )")
+                dev.verbose("Key: "..k.." = ".."( table )")
                 a[k]=deepCopy(v)
             else
-                --print("Key: "..k.." = "..tostring(v))
+                dev.verbose("Key: "..k.." = "..tostring(v))
                 a[k]=v
             end
         end
-        --printError("--Function return")
+        dev.verboseRed("--Function return")
         return a
     end
     local function verify(target,reference)
@@ -151,6 +176,7 @@ do
     end
     function save_settings()
         print("Writing local config file...")
+        dev.print(program_info.files.config)
         local file = fs.open(program_info.files.config,"w")
         file.write(textutils.serialise(program_settings_default))
         file.close()
@@ -159,16 +185,17 @@ do
         if fs.exists(program_info.files.config) and not forceDefault then
             local file = fs.open(program_info.files.config,"r")
             program_settings = textutils.unserialise(file.readAll())
-            file.close()
-            local err = verify(program_settings,program_settings_default)
-            if err then printError("Config file is incomplete") save_settings() end
+            file.close() local err
+            local pass, serr = pcall(function() err = verify(program_settings,program_settings_default) end)
+            if serr then printError("### Config file is corrupt!") sleep(2) load_settings(true) return "corrupt"
+            elseif err then printError("Config file is incomplete") save_settings() return "update" end
         else
             program_settings = deepCopy(program_settings_default)
             save_settings()
         end
     end
 end
---]]
+--
 function math.clamp(vMin,vMax,x)
 	return math.max(math.min(x,vMax),vMin)
 end
@@ -200,13 +227,17 @@ args = {
             if string.lower(args.commandLine[i]) == "/test" then args.test = true end
             if string.lower(args.commandLine[i]) == "/verbose" then args.verbose = true end
             if string.lower(args.commandLine[i]) == "--verbose" then args.verbose = true end
+            if string.lower(args.commandLine[i]) == "/update" then args.update = true
+                i=i+1 if i>#args.commandLine then return end args.updateBranch = args.commandLine[i] end
+            if string.lower(args.commandLine[i]) == "--update" then args.update = true
+                i=i+1 if i>#args.commandLine then return end args.updateBranch = args.commandLine[i] end
             --dev.verbose(i, type(args.commandLine[i]), args.commandLine[i])
         end
         --sleep(1)
     end,
 }
 args.scanCommandLine()
-if args.help then progInfo.help.display() end
+if args.help then program_info.help.display() end
 dev = {
     print = function(...)
         if args.dev then
@@ -216,6 +247,11 @@ dev = {
     verbose = function(...)
         if args.verbose then
             print(...)
+        end
+    end,
+    verboseRed = function(...)
+        if args.verbose then
+            printError(...)
         end
     end,
     write = function(...)
@@ -387,7 +423,7 @@ gui = {
                 run = function()
                     if equipment.reactor.getStatus() then
                         printError('REACTOR IS ACTIVE; SCRAMMING...')
-                        pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
+                        pcall(function()vox.queue(program_settings.vox.sequences["reactorDeactivated"]) end)
                         equipment.reactor.scram()
                     end
                     dev.write("Rainbow Dash is best pegasus!") dev.sleep(0.25)
@@ -415,16 +451,18 @@ systemMonitor = {
     warnConfig = {
         setup = function()
             if peripheral.isPresent(peripheral.getName(equipment.reactor)) then
-                systemMonitor.warnConfig.wasteFullOffset = equipment.reactor.getWasteCapacity() - systemMonitor.warnConfig.wasteFullOffset
-                systemMonitor.warnConfig.steamFullOffset = equipment.reactor.getHeatedCoolantCapacity() - systemMonitor.warnConfig.steamFullOffset
+                --systemMonitor.warnConfig.wasteFullOffset = equipment.reactor.getWasteCapacity() - systemMonitor.warnConfig.wasteFullOffset
+                --systemMonitor.warnConfig.steamFullOffset = equipment.reactor.getHeatedCoolantCapacity() - systemMonitor.warnConfig.steamFullOffset
+                systemMonitor.warnConfig.integrityWarn = program_settings.alarm.integrity_min
+                systemMonitor.warnConfig.coolantMin = program_settings.alarm.coolant_min_mB
             end
         end,
-        wasteFullOffset = 500,
-        steamFullOffset = 500,
+        --wasteFullOffset = 500,
+        --steamFullOffset = 500,
         tempLimit = 1000,
-        coolantMin = 10000,
+        --coolantMin = 10000,
         fuelMin = 1,
-        integrityWarn = 100,
+        --integrityWarn = 100,
     },
     alarms = {
         master = false,
@@ -436,6 +474,7 @@ systemMonitor = {
     thread_main = function()
         if args.voxTest then return end
         os.queueEvent("r.system_screen")
+        systemMonitor.warnConfig.setup()
         while true do
             while not peripheral.isPresent(peripheral.getName(equipment.reactor)) or systemMonitor.alarms.disconnected do
                 if not systemMonitor.alarms.disconnected then
@@ -470,28 +509,30 @@ systemMonitor = {
                 term.redirect(gui.rootTerminal)
                 --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
-            pcall(function()
+            local pass,err = pcall(function()
                 systemMonitor.data.status = equipment.reactor.getStatus()
 
-                systemMonitor.data.fuel = equipment.reactor.getFuel()
+                systemMonitor.data.fuel = equipment.reactor.getFuel().amount
                 systemMonitor.data.fuel_cap = equipment.reactor.getFuelCapacity()
                 systemMonitor.data.fuel_percent = systemMonitor.data.fuel/systemMonitor.data.fuel_cap
-                systemMonitor.data.waste = equipment.reactor.getWaste()
+                systemMonitor.data.waste = equipment.reactor.getWaste().amount
                 systemMonitor.data.waste_cap = equipment.reactor.getWasteCapacity()
                 systemMonitor.data.waste_percent = systemMonitor.data.waste/systemMonitor.data.waste_cap
 
-                systemMonitor.data.coolant = equipment.reactor.getCoolant()
-                systemMonitor.data.coolant = systemMonitor.data.coolant.amount
+                systemMonitor.data.coolant = equipment.reactor.getCoolant().amount
+                systemMonitor.data.coolant = systemMonitor.data.coolant
                 systemMonitor.data.coolant_cap = equipment.reactor.getCoolantCapacity()
                 systemMonitor.data.coolant_percent = systemMonitor.data.coolant/systemMonitor.data.coolant_cap
-                systemMonitor.data.steam = equipment.reactor.getHeatedCoolant()
-                systemMonitor.data.steam = systemMonitor.data.steam.amount
+                systemMonitor.data.steam = equipment.reactor.getHeatedCoolant().amount
+                systemMonitor.data.steam = systemMonitor.data.steam
                 systemMonitor.data.steam_cap = equipment.reactor.getHeatedCoolantCapacity()
                 systemMonitor.data.steam_percent = systemMonitor.data.steam/systemMonitor.data.steam_cap
                 systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
 
                 systemMonitor.data.damage = equipment.reactor.getDamagePercent()
             end)
+
+            --if err then printError(err) sleep(0.5) end
 
             local env = gui.windows.monitor
             --sleep(1) os.queueEvent("system_interrupt")
@@ -521,7 +562,7 @@ systemMonitor = {
                 
                 if systemMonitor.data.status then
                     equipment.reactor.scram()
-                    vox.queue(vox_sequences.manualIllAdvised)
+                    vox.queue(program_settings.vox.sequences["manualIllAdvised"])
                 end
             end
             --error("Program under heavy rewrite...",0)
@@ -549,7 +590,7 @@ systemMonitor = {
                     end
                 end
                 --os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorDeactivated)
+                vox.queue(program_settings.vox.sequences["reactorDeactivated"])
                 systemMonitor.vars.isActive = false
             elseif not systemMonitor.vars.isActive and status then
                 for i=1, #gui.menus.main do
@@ -561,7 +602,7 @@ systemMonitor = {
                     end
                 end
                 --os.queueEvent("system_interrupt")
-                vox.queue(vox_sequences.reactorActivated)
+                vox.queue(program_settings.vox.sequences["reactorActivated"])
                 systemMonitor.vars.isActive = true
             end
         end
@@ -577,45 +618,45 @@ systemMonitor = {
                 systemMonitor.vars.isNoFuel = false
             elseif fuel == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoFuel = true
-                vox.queue(vox_sequences.noFuel) dev.pos(11,1) dev.write('VOX noFuel')
+                vox.queue(program_settings.vox.sequences["noFuel"]) dev.pos(11,1) dev.write('VOX noFuel')
             end
 
             if systemMonitor.vars.isNoCoolant and coolant > 0 then
                 systemMonitor.vars.isNoCoolant = false
             elseif coolant == 0 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isNoCoolant = true
-                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
+                vox.queue(program_settings.vox.sequences["noCoolant"]) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
-            if systemMonitor.vars.isLowCoolant and coolant > 0 then
+            if systemMonitor.vars.isLowCoolant and coolant >= systemMonitor.warnConfig.coolantMin then
                 systemMonitor.vars.isLowCoolant = false
             elseif coolant < systemMonitor.warnConfig.coolantMin and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isLowCoolant = true
-                vox.queue(vox_sequences.noCoolant) dev.pos(11,1) dev.write('VOX noCoolant')
+                vox.queue(program_settings.vox.sequences["noCoolant"]) dev.pos(11,1) dev.write('VOX noCoolant')
             end
 
             if systemMonitor.vars.isSteamFull and steam < steam_cap-500 then
                 systemMonitor.vars.isSteamFull = false
             elseif steam >= steam_cap-500 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isSteamFull = true
-                vox.queue(vox_sequences.overflowSteam) dev.pos(11,1) dev.write('VOX overflowSteam')
+                vox.queue(program_settings.vox.sequences["overflowSteam"]) dev.pos(11,1) dev.write('VOX overflowSteam')
             end
 
             if systemMonitor.vars.isWasteFull and waste < waste_cap-500 then
                 systemMonitor.vars.isWasteFull = false
             elseif waste >= waste_cap-500 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isWasteFull = true
-                vox.queue(vox_sequences.overflowWaste) dev.pos(11,1) dev.write('VOX overflowWaste')
+                vox.queue(program_settings.vox.sequences["overflowWaste"]) dev.pos(11,1) dev.write('VOX overflowWaste')
             end
 
             if systemMonitor.vars.isTempCritical and temp < 1000 then
                 systemMonitor.vars.isTempCritical = false
             elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isTempCritical = true
-                vox.queue(vox_sequences.highTemp) dev.pos(11,1) dev.write('VOX highTemp')
+                vox.queue(program_settings.vox.sequences["highTemp"]) dev.pos(11,1) dev.write('VOX highTemp')
             end
         end
-
+ 
         if waste == waste_cap then
             systemMonitor.alarms.radiation = true
         end
@@ -625,12 +666,11 @@ systemMonitor = {
         elseif systemMonitor.alarms.radiation_CoolDown > 0 then
             systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
         end
-
-        if status and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn) then
-            equipment.reactor.scram()
-        end
-        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn) then
+        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn or coolant < systemMonitor.warnConfig.coolantMin) then
             systemMonitor.alarms.master = true
+        end
+        if status and systemMonitor.alarms.master then
+            equipment.reactor.scram()
         end
         --  600 K moderate
         -- 1000 K high
@@ -819,10 +859,23 @@ equipment = {
     reactor = peripheral.find("fissionReactor"),
     radiationSensors = {},
     findReactor = function()
-        local ap = peripheral.find("fissionReactor")
-        local mk = peripheral.find("fissionReactorLogicAdapter")
-        equipment.reactor = ap or mk
-        return (ap or mk) and true or false, ap and "legacy" or mk and "mek" or "none"
+        local name
+        if program_settings.peripherals.reactor and type(program_settings.peripherals.reactor) == "string" and #program_settings.peripherals.reactor>0 then
+            dev.verboseRed("Config")
+            name = program_settings.peripherals.reactor
+        else
+            dev.verboseRed("Search")
+            local perif = peripheral.find("fissionReactor") or peripheral.find("fissionReactorLogicAdapter")
+            name = perif and peripheral.getName(perif)
+        end
+        if not name then return nil, "none" end
+        dev.verbose(name)
+        local type = peripheral.getType(name)
+        dev.verbose(type)
+        if type == "fissionReactor" then type = "legacy"
+        elseif type == "fissionReactorLogicAdapter" then type = "mek"
+        else type = "none" end dev.verboseRed(type)
+    return peripheral.isPresent(name),type,name
     end,
     findSensors = function()
         local attached = peripheral.getNames()
@@ -834,7 +887,7 @@ equipment = {
         if #equipment.radiationSensors > 0 then return true else radiationSensors = nil end
     end,
 }
-equipment.findSensors()
+--equipment.findSensors()
 intercom = {
 	list = {},
 	findAll = function()
@@ -886,39 +939,128 @@ vox = {
         return request
     end,
     send_message = function(vox_message)
-        local channel = --[[program_settings.vox.modem_channel or]] 39934
+        local channel = program_settings.vox.modem_channel or 39934
         local modem = peripheral.find("modem")
         modem.transmit(channel,channel,vox_message)
     end,
 }
-
 startup = {
-    
+    update = function(branch)
+        local branch = branch or "master"
+        local address = "https://gitlab.com/peekofwar-craftos-programs/mekanism-fission-reactor-control/-/raw/"..branch.."/reactor_control.lua"
+        local run
+        local c = term.getTextColor() term.setTextColor(colors.green)
+        print("Fetching update from '"..branch.."' branch:") term.setTextColor(c)
+        do
+            --[[
+                Program made by Peekofwar
+                (c) 2021
+                https://gitlab.com/Peekofwar
+                
+                It's a replacement for wget should you be
+                running an ancient version of CraftOS which
+                doesn't contain such a program.
+                It does ask to overwrite an existing file,
+                which the CraftOS wget can't do.
+                
+                wget https://gitlab.com/peekofwar-craftos-programs/misc/-/raw/main/wgetReplacement.lua
+                pastebin get EYwhWkvd wgetReplacement.lua
+            ]]
+            local arguments = { address, shell.getRunningProgram()}
+            local function promptOverwrite()
+                printError("File already exists.")
+                print("Press [y] to overwrite, or press [n] to cancel.")
+                term.setCursorBlink(true)
+                while true do
+                    local event, key = os.pullEvent("char")
+                    if key == "y" then
+                        term.setCursorBlink(false)
+                        return true
+                    elseif key == "n" then
+                        printError("File download canceled.")
+                        term.setCursorBlink(false)
+                        return false
+                    end
+                end
+            end
+            local function run()
+                local request
+                local destination
+                local tempPath
+                local isRun
+                if arguments[1] == "run" then
+                    isRun = true
+                    request = arguments[2]
+                    tempPath = "/.temp/"..request:match("[^%/]*$")
+                else
+                    request = arguments[1]
+                    destination = arguments[2] or request:match("[^%/]*$")
+                end
+                print("Fetching file from '"..request.."'...")
+                local webfile,err = http.get(request)
+                if err then
+                    printError("Failed with error: "..err)
+                elseif isRun then
+                    local file = fs.open(tempPath,"w")
+                    file.write(webfile.readAll())
+                    file.close()
+                    print("Running '"..tempPath.."'...")
+                    shell.run(tempPath)
+                    fs.delete(tempPath)
+                else
+                    if fs.exists(destination) and promptOverwrite() or not fs.exists(destination) then
+                        local file = fs.open(destination,"w")
+                        file.write(webfile.readAll())
+                        file.close()
+                        print("File saved as '"..destination.."'.")
+                    end
+                end
+            end
+            if #arguments > 0 then
+                run()
+            end
+        end
+    end,
     start = function()
         term.setCursorBlink(true)
-        print(progInfo.appName .. "\n"..progInfo.version.string, "build "..progInfo.version.build, "("..progInfo.version.date..")\n")
+        print(program_info.appName .. "\n"..program_info.version.string, "build "..program_info.version.build, "("..program_info.version.date..")\n")
+        if args.update then startup.update(args.updateBranch) return end
+        print("Loading config...")
+        local state = load_settings()
+        if state == "corrupt" then pcall(function() vox.queue(program_settings.vox.sequences["configCorrupt"]) end) sleep(1) end
         sleep(1)
-        local pass,result = equipment.findReactor()
-        if equipment.reactor then
+        
+        local pass,result,perif = equipment.findReactor()
+        dev.verbose(pass) dev.verbose(result) dev.verbose(tostring(perif))
+        if pass and result then
+            equipment.reactor = peripheral.wrap(perif)
+            local s = equipment.reactor.scram
+            function equipment.reactor.scram()
+                pcall(s)
+            end
+        end
+        dev.sleep(2)
+        if pass and not args.voxTest then
             print("Found: "..peripheral.getName(equipment.reactor))
-            if result == "mek" and not args.voxTest then
-                crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.")
+            --[[if result == "mek"then
+                crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.\n\nRun '"..shell.getRunningProgram().." /update' to fetch the latest version.")
                 equipment.reactor.scram()
                 return
-            end
+            end]]
         elseif not args.voxTest then
-            crashScreen(false,"Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.")
+            crashScreen(false,"Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n\nDouble check that the reactor name is correct in the config file.")
             return
         end
         if equipment.radiationSensors then
             print("Found: "..#equipment.radiationSensors.." radiation sensors")
         end
-        if equipment.reactor and equipment.reactor.getStatus() then
+        if equipment.reactor and equipment.reactor.getStatus() and program_settings.startup.scram_active then
             equipment.reactor.scram()
             printError("REACTOR IS ACTIVE; SCRAMMING...")
-            pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
+            pcall(function()vox.queue(program_settings.vox.sequences["reactorDeactivated"]) end)
             sleep(1)
         end
+        dev.sleep(0.75)
         print("Starting GUI...")
         sleep(0.5)
         term.setCursorBlink(false)
@@ -928,7 +1070,7 @@ startup = {
         if equipment.reactor and equipment.reactor.getStatus() then
             equipment.reactor.scram()
             printError("\nREACTOR IS ACTIVE; SCRAMMING...")
-            pcall(function()vox.queue(vox_sequences.reactorDeactivated) end)
+            pcall(function()vox.queue(program_settings.vox.sequences["reactorDeactivated"]) end)
             sleep(1)
             --quit()
         end
@@ -941,6 +1083,20 @@ startup = {
         parallel.waitForAll(listen.fallbackTerminate,systemMonitor.thread_main,systemMonitor.thread_input,systemMonitor.thread_monitor)
     end,
 }
+local function printWait()
+    local function getColor(color)
+        return 2^(color-1)
+    end
+    local x,y=term.getCursorPos()
+    local w,h=term.getSize()
+    term.setCursorPos(1,h)
+    term.setTextColor(getColor(5))
+    write("Press any key to continue...")
+    local event, key, is_held = os.pullEvent('key')
+    term.clearLine()
+    term.setCursorPos(x,y)
+    return
+end
 local __termOrig = term.current()
 crashScreen = function(...)
     term.redirect(__termOrig)
@@ -959,6 +1115,8 @@ crashScreen = function(...)
         
         term.setBackgroundColor(colors.black)
         printError('\n\n\n'..err..'\n')
+
+        if lOS then printWait() end
     end
 end
 quit = function()
@@ -969,10 +1127,11 @@ quit = function()
 end
 
 function vox.queue(message)
+    if not program_settings.vox.enabled then return false end
     --if not vox_sequences[message_name] then return error("Vox message '"..message_name.."' does not exist.") end
-    local request = vox.generate_message(message)
+    local request = vox.generate_message(message, program_settings.vox.default_voice or nil)
     return vox.send_message(request)
-end
+end--[[
 vox_sequences = {
 	["reactorActivated"] = "deeuu: Fission reactor activated.",
     ["reactorDeactivated"] = "deeuu: Fission reactor deactivated.",
@@ -982,7 +1141,8 @@ vox_sequences = {
     ["noCoolant"] = "bizwarn bizwarn: Warning: Insufficient reactor coolant!",
     ["highTemp"] = "bizwarn bizwarn: Warning: Reactor temperature critical!",
     ["manualIllAdvised"] = "deeuu: Warning: Reactor activation is ill advised. Please check control terminal.",
-}
+    ["configCorrupt"] = "deeuu: Warning: Reactor config corrupted. deeoo: Check terminal configuration.",
+}]]
 
 if args.voxTest then
     local menuEntries = {
@@ -997,56 +1157,63 @@ if args.voxTest then
             name = "test vox reactorActivated",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.reactorActivated)
+                vox.queue(program_settings.vox.sequences["reactorActivated"])
             end,
         },
         {
             name = "test vox reactorDeactivated",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.reactorDeactivated)
+                vox.queue(program_settings.vox.sequences["reactorDeactivated"])
             end,
         },
         {
             name = "test vox overflowWaste",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.overflowWaste)
+                vox.queue(program_settings.vox.sequences["overflowWaste"])
             end,
         },
         {
             name = "test vox overflowSteam",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.overflowSteam)
+                vox.queue(program_settings.vox.sequences["overflowSteam"])
             end,
         },
         {
             name = "test vox noFuel",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.noFuel)
+                vox.queue(program_settings.vox.sequences["noFuel"])
             end,
         },
         {
             name = "test vox noCoolant",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.noCoolant)
+                vox.queue(program_settings.vox.sequences["noCoolant"])
             end,
         },
         {
             name = "test vox highTemp",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.highTemp)
+                vox.queue(program_settings.vox.sequences["highTemp"])
             end,
         },
         {
             name = "test vox manualIllAdvised",
             enabled = true,
             run = function()
-                vox.queue(vox_sequences.manualIllAdvised)
+                vox.queue(program_settings.vox.sequences["manualIllAdvised"])
+            end,
+        },
+        {
+            name = "test vox configCorrupt",
+            enabled = true,
+            run = function()
+                vox.queue(program_settings.vox.sequences["configCorrupt"])
             end,
         },
         {
