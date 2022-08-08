@@ -4,9 +4,9 @@ local program_info = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {
-        string = '1.2.0a2',
-	    date = 'April 25, 2022',
-        build = 71,
+        string = '1.2.0a3',
+	    date = 'August 8, 2022',
+        build = 72,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1032,15 +1032,19 @@ startup = {
         dev.verbose(pass) dev.verbose(result) dev.verbose(tostring(perif))
         if pass and result then
             equipment.reactor = peripheral.wrap(perif)
+            local s = equipment.reactor.scram
+            function equipment.reactor.scram()
+                pcall(s)
+            end
         end
         dev.sleep(2)
         if pass and not args.voxTest then
             print("Found: "..peripheral.getName(equipment.reactor))
-            if result == "mek"then
+            --[[if result == "mek"then
                 crashScreen(false,"ERROR: This program is outdated, and will not work with Mekanism's peripheral API.\n\nPlease update to a newer version.\n\nRun '"..shell.getRunningProgram().." /update' to fetch the latest version.")
                 equipment.reactor.scram()
                 return
-            end
+            end]]
         elseif not args.voxTest then
             crashScreen(false,"Couldn't find a reactor. Check connected cables and ensure the modem on the reactor is activated, then try again.\n\nDouble check that the reactor name is correct in the config file.")
             return
