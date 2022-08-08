@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a3',
 	    date = 'August 8, 2022',
-        build = 76,
+        build = 77,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -520,11 +520,11 @@ systemMonitor = {
                 systemMonitor.data.waste_percent = systemMonitor.data.waste/systemMonitor.data.waste_cap
 
                 systemMonitor.data.coolant = equipment.reactor.getCoolant().amount
-                systemMonitor.data.coolant = systemMonitor.data.coolant.amount
+                systemMonitor.data.coolant = systemMonitor.data.coolant
                 systemMonitor.data.coolant_cap = equipment.reactor.getCoolantCapacity()
                 systemMonitor.data.coolant_percent = systemMonitor.data.coolant/systemMonitor.data.coolant_cap
                 systemMonitor.data.steam = equipment.reactor.getHeatedCoolant().amount
-                systemMonitor.data.steam = systemMonitor.data.steam.amount
+                systemMonitor.data.steam = systemMonitor.data.steam
                 systemMonitor.data.steam_cap = equipment.reactor.getHeatedCoolantCapacity()
                 systemMonitor.data.steam_percent = systemMonitor.data.steam/systemMonitor.data.steam_cap
                 systemMonitor.data.temp = equipment.reactor.getTemperature() -- Kelvin
@@ -532,7 +532,7 @@ systemMonitor = {
                 systemMonitor.data.damage = equipment.reactor.getDamagePercent()
             end)
 
-            if err then printError(err) sleep(0.5) end
+            --if err then printError(err) sleep(0.5) end
 
             local env = gui.windows.monitor
             --sleep(1) os.queueEvent("system_interrupt")
