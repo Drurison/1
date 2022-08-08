@@ -6,7 +6,7 @@ local program_info = {
 	version = {
         string = '1.2.0a3',
 	    date = 'August 8, 2022',
-        build = 74,
+        build = 76,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -509,7 +509,7 @@ systemMonitor = {
                 term.redirect(gui.rootTerminal)
                 --error("WARNING: Reactor diconnected from network!\n\nCheck reactor status immediately.",0)
             end
-            pcall(function()
+            local pass,err = pcall(function()
                 systemMonitor.data.status = equipment.reactor.getStatus()
 
                 systemMonitor.data.fuel = equipment.reactor.getFuel().amount
@@ -531,6 +531,8 @@ systemMonitor = {
 
                 systemMonitor.data.damage = equipment.reactor.getDamagePercent()
             end)
+
+            if err then printError(err) sleep(0.5) end
 
             local env = gui.windows.monitor
             --sleep(1) os.queueEvent("system_interrupt")
