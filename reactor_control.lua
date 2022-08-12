@@ -4,9 +4,9 @@ local program_info = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {-- PUSHED TO MASTER
-        string = '1.2.0a3',
-	    date = 'August 8, 2022',
-        build = 77,
+        string = '1.2.1a1',
+	    date = 'August 12, 2022',
+        build = 1,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -1035,8 +1035,14 @@ startup = {
         if pass and result then
             equipment.reactor = peripheral.wrap(perif)
             local s = equipment.reactor.scram
+            local gs = equipment.reactor.getStatus
             function equipment.reactor.scram()
                 pcall(s)
+            end
+            function equipment.reactor.getStatus()
+                local status
+                local pass,err = pcall(function() status = gs() end)
+                return status, not pass, err
             end
         end
         dev.sleep(2)
