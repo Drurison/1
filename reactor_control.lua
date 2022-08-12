@@ -6,7 +6,7 @@ local program_info = {
 	version = {-- PUSHED TO MASTER
         string = '1.2.1a1',
 	    date = 'August 12, 2022',
-        build = 1,
+        build = 2,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -34,9 +34,12 @@ program_info.help = {
             "  (defaults to 'master' if nothing is specified).",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.2.1:"},
+            " * 'getStstus' method is now pcalled.",
             {colors.lightBlue,"Changelong v1.2.0:"},
             " + Added user config file.",
             " + Added update script (see switches above).",
+            " * Uses Mekanism's version of the API",
             {colors.lightBlue,"Changelong v1.1.0:"},
             " + Added reactor disconnect alarm state and message",
             "   (no longer a program stop-error).",
