@@ -4,9 +4,9 @@ local program_info = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {-- PUSHED TO MASTER
-        string = '1.2.0',
-	    date = 'August 8, 2022',
-        build = 77,
+        string = '1.2.1',
+	    date = 'August 12, 2022',
+        build = 2,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -34,9 +34,12 @@ program_info.help = {
             "  (defaults to 'master' if nothing is specified).",
             "",
         -- "|                                                    |"
+            {colors.lightBlue,"Changelong v1.2.1:"},
+            " * 'getStstus' method is now pcalled.",
             {colors.lightBlue,"Changelong v1.2.0:"},
             " + Added user config file.",
             " + Added update script (see switches above).",
+            " * Uses Mekanism's version of the API",
             {colors.lightBlue,"Changelong v1.1.0:"},
             " + Added reactor disconnect alarm state and message",
             "   (no longer a program stop-error).",
@@ -539,7 +542,7 @@ systemMonitor = {
             local w,h = env.getSize()
             local disconnect_warn_state = false
 
-            local status = equipment.reactor.getStatus()
+            local status,status_problem = equipment.reactor.getStatus()
 
             local fuel = systemMonitor.data.fuel or -1
             local fuel_cap = systemMonitor.data.fuel_cap or -1
@@ -1035,8 +1038,14 @@ startup = {
         if pass and result then
             equipment.reactor = peripheral.wrap(perif)
             local s = equipment.reactor.scram
+            local gs = equipment.reactor.getStatus
             function equipment.reactor.scram()
                 pcall(s)
+            end
+            function equipment.reactor.getStatus()
+                local status
+                local pass,err = pcall(function() status = gs() end)
+                return status or false, not pass, err
             end
         end
         dev.sleep(2)
