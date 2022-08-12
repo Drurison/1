@@ -539,7 +539,7 @@ systemMonitor = {
             local w,h = env.getSize()
             local disconnect_warn_state = false
 
-            local status = equipment.reactor.getStatus()
+            local status,status_problem = equipment.reactor.getStatus()
 
             local fuel = systemMonitor.data.fuel or -1
             local fuel_cap = systemMonitor.data.fuel_cap or -1
@@ -1042,7 +1042,7 @@ startup = {
             function equipment.reactor.getStatus()
                 local status
                 local pass,err = pcall(function() status = gs() end)
-                return status, not pass, err
+                return status or false, not pass, err
             end
         end
         dev.sleep(2)
