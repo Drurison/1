@@ -9,7 +9,7 @@
 	 Step 2: Reset the burn rate and start adjusting
 	the burn rate until the coolant rate is just barely
 	positive. If just barely increasing the burn rate
-	moves the coolant to a negative value, then you're
+	moves the coolant to a negative value, then you've
 	found the maximal safe burn rate.
 	
 	Todo: Program an automated tuning mode
