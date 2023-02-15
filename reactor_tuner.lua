@@ -2,6 +2,17 @@
 	Simple Reactor Tuner
 	(c) 2023 Peekofwar
 	v1.0
+	
+	How to use:
+	 Step 1: Raise the burn rate to a high level
+	and wait for the coolant rate to show a reading.
+	 Step 2: Reset the burn rate and start adjusting
+	the burn rate until the coolant rate is just barely
+	positive. If just barely increasing the burn rate
+	moves the coolant to a negative value, then you're
+	found the maximal safe burn rate.
+	
+	Todo: Program an automated tuning mode
 ]]
 
 local reactor = "fissionReactorLogicAdapter_2"
@@ -16,6 +27,7 @@ local data = {
 	burn = 0,
 }
 local display_exit = false
+
 
 local function render()
 	while true do
