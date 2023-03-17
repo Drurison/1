@@ -4,9 +4,9 @@ local program_info = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {-- PUSHED TO MASTER
-        string = '1.2.1a1',
-	    date = 'August 12, 2022',
-        build = 2,
+        string = '1.2.2a1',
+	    date = 'March 17, 2023',
+        build = 1,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -652,7 +652,7 @@ systemMonitor = {
                 vox.queue(program_settings.vox.sequences["overflowWaste"]) dev.pos(11,1) dev.write('VOX overflowWaste')
             end
 
-            if systemMonitor.vars.isTempCritical and temp < 1000 then
+            if systemMonitor.vars.isTempCritical and temp < 1200 then
                 systemMonitor.vars.isTempCritical = false
             elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isTempCritical = true
