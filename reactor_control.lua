@@ -4,9 +4,9 @@ local program_info = {
 	name = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1),
 	appName = 'ACI Fission Reactor Control',
 	version = {-- PUSHED TO MASTER
-        string = '1.2.1',
-	    date = 'August 12, 2022',
-        build = 2,
+        string = '1.2.2',
+	    date = 'March 17, 2023',
+        build = 1,
     },
 	files = {
 		config = string.sub(shell.getRunningProgram(),1,#shell.getRunningProgram()-#shell.getRunningProgram():match("[^%.]*$")-1)..'.cfg',
@@ -462,7 +462,7 @@ systemMonitor = {
         end,
         --wasteFullOffset = 500,
         --steamFullOffset = 500,
-        tempLimit = 1000,
+        tempLimit = 1200,
         --coolantMin = 10000,
         fuelMin = 1,
         --integrityWarn = 100,
@@ -652,9 +652,9 @@ systemMonitor = {
                 vox.queue(program_settings.vox.sequences["overflowWaste"]) dev.pos(11,1) dev.write('VOX overflowWaste')
             end
 
-            if systemMonitor.vars.isTempCritical and temp < 1000 then
+            if systemMonitor.vars.isTempCritical and temp < 1200 then
                 systemMonitor.vars.isTempCritical = false
-            elseif temp >= 1000 and (status or systemMonitor.vars.forceCheck) then
+            elseif temp >= 1200 and (status or systemMonitor.vars.forceCheck) then
                 systemMonitor.vars.isTempCritical = true
                 vox.queue(program_settings.vox.sequences["highTemp"]) dev.pos(11,1) dev.write('VOX highTemp')
             end
@@ -669,7 +669,7 @@ systemMonitor = {
         elseif systemMonitor.alarms.radiation_CoolDown > 0 then
             systemMonitor.alarms.radiation_CoolDown = systemMonitor.alarms.radiation_CoolDown - 1
         end
-        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1000 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn or coolant < systemMonitor.warnConfig.coolantMin) then
+        if not systemMonitor.alarms.master and (coolant == 0 or fuel == 0 or temp >= 1200 or steam >= steam_cap-500 or waste >= waste_cap-500 or math.floor(100-damage) < systemMonitor.warnConfig.integrityWarn or coolant < systemMonitor.warnConfig.coolantMin) then
             systemMonitor.alarms.master = true
         end
         if status and systemMonitor.alarms.master then
@@ -788,10 +788,10 @@ systemMonitor = {
                 --env.write("Temp: "..math.floor(temp).."K")
                 if systemMonitor.vars.isTempCritical and systemMonitor.vars.warnFlash then
                     env.setTextColor(colors.red)
-                    barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.red,colors.gray,env)
+                    barMeter(2,6,w/2-2,temp,1200,"Temp: ",math.floor(temp).."K",colors.red,colors.gray,env)
                 else
                     env.setTextColor(colors.white)
-                    barMeter(2,6,w/2-2,temp,1000,"Temp: ",math.floor(temp).."K",colors.lightBlue,colors.gray,env)
+                    barMeter(2,6,w/2-2,temp,1200,"Temp: ",math.floor(temp).."K",colors.lightBlue,colors.gray,env)
                 end
                 if (systemMonitor.vars.isNoCoolant or systemMonitor.vars.isLowCoolant) and systemMonitor.vars.warnFlash then
                     env.setTextColor(colors.red)
